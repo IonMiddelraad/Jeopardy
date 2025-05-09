@@ -3,8 +3,14 @@ import type { Team } from '~/models/team'
 
 export const useTeamStore = defineStore('team', {
   state: () => ({
-    amountOfTeams: 1 as number,
-    teams: [] as Team[],
+    amountOfTeams: 3 as number,
+    canChangeScore: false as boolean,
+    currentActivePoints: 0 as number,
+    teams: [
+      { id: 0, name: "testTeam1testTeam1", points: 100 },
+      { id: 1, name: "testTeam1", points: 100 },
+      { id: 2, name: "testTeam2", points: 0 }
+    ] as Team[],
 
   }),
   actions: {
@@ -15,6 +21,9 @@ export const useTeamStore = defineStore('team', {
       } else {
         console.warn(`Team with ID: ${teamId} not found`)
       }
+    },
+    toggleCanChangeScore(value: boolean) {
+      this.canChangeScore = value;
     }
   }
 })
