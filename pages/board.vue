@@ -29,7 +29,7 @@ onMounted(async () => {
 
 <template>
   <div class="mx-auto">
-    <TeamComponent></TeamComponent>
+    
     <!-- Make sure this grid creates the correct number of columns -->
     <div class="grid grid-cols-5">
       <div v-for="(category, index) in boardStore.boardData?.categories" :key="index"

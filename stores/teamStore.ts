@@ -7,13 +7,18 @@ export const useTeamStore = defineStore('team', {
     canChangeScore: false as boolean,
     currentActivePoints: 0 as number,
     teams: [
-      { id: 0, name: "testTeam1testTeam1", points: 100 },
-      { id: 1, name: "testTeam1", points: 100 },
-      { id: 2, name: "testTeam2", points: 0 }
+      { id: 0, name: "Team 1", points: 0, color: "#6db7ff" },
+      { id: 1, name: "De mensen die gaan winnen", points: 0, color: "#ff6d6e" },
+      { id: 2, name: "Het derde team", points: 0 }
     ] as Team[],
 
   }),
   actions: {
+    updateTeam(newTeam: Team) {
+      let teamIndex = this.teams.findIndex((team) => team.id == newTeam.id);
+      this.teams[teamIndex] = newTeam;
+    },
+
     updateTeamPoints(teamId: number, pointAmount: number) {
       const team = this.teams.find(t => t.id === teamId);
       if (team) {
@@ -24,6 +29,9 @@ export const useTeamStore = defineStore('team', {
     },
     toggleCanChangeScore(value: boolean) {
       this.canChangeScore = value;
+    },
+    addTeam() {
+
     }
   }
 })
