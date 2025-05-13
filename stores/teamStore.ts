@@ -6,8 +6,8 @@ export const useTeamStore = defineStore('team', {
     amountOfTeams: 3 as number,
     teams: [
       { id: 0, name: "Team 1", points: 0, color: "#6db7ff" },
-      { id: 1, name: "De mensen die dik hard gaan winnen", points: 0, color: "#ff6d6e" },
-      { id: 2, name: "Het derde team", points: 0 }
+      { id: 1, name: "Team 2", points: 0, color: "#ff6d6e" },
+      { id: 2, name: "Team 3", points: 0 }
     ] as Team[],
 
   }),
@@ -26,7 +26,12 @@ export const useTeamStore = defineStore('team', {
       }
     },
     addTeam() {
-
+      if (this.teams.length > 4) return;
+      this.teams.push({ id: this.teams.length, name: "Team " + (this.teams.length + 1), points: 0, color: "" });
+    },
+    removeTeam() {
+      if (this.teams.length < 2) return;
+      this.teams.pop();
     }
   }
 })

@@ -23,6 +23,14 @@ function saveTeam() {
   showModal.value = false
 }
 
+function addTeam() {
+  teamStore.addTeam()
+}
+
+function removeTeam() {
+  teamStore.removeTeam()
+}
+
 function isDarkColor(hex: string): boolean {
   if (!hex) return false
   const r = parseInt(hex.slice(1, 3), 16)
@@ -40,10 +48,10 @@ function getTextColorClass(color?: string): string {
 </script>
 
 <template>
-  <section>
+  <div class="select-none">
     <!-- Teams at the top -->
-    <div class="flex justify-evenly">
-      <div v-for="(team, index) in teamStore.teams" :key="index" class="text-center min-w-72">
+    <section class="flex justify-evenly gap-x-2 px-2">
+      <div v-for="(team, index) in teamStore.teams" :key="index" class="text-center flex-grow min-w-48">
         <div class="flex flex-row gap-x-3 border border-black border-t-0 rounded-b-full px-8 py-2 gap-4"
           :style="{ backgroundColor: team.color || '#eab308' }">
           <div class="flex flex-col items-center justify-center mx-auto" :class="getTextColorClass(team.color)">
@@ -55,26 +63,47 @@ function getTextColorClass(color?: string): string {
 
         </div>
         <!-- Edit team modal -->
+        
         <modal :show="showModal" @close="showModal = false" class="text-left">
           <div v-if="selectedTeam">
             <h2 class="text-2xl font-semibold">Edit your Team!</h2>
             <form class="flex flex-col">
-              <label for="teamName" class="text-lg pt-2">Team name:</label>
-              <input type="text" id="teamName" name="teamName" class="border border-black rounded text-lg px-2"
-                :placeholder="selectedTeam.name" v-model="formTeam.name" />
-              <label for="teamColor" class="text-lg pt-2">Pick your color:</label>
+              <p for="teamName" class="text-lg pt-2">Team name:</p>
+              <input type="text" id="teamName" name="teamName" maxlength="32"
+                class="border border-black rounded text-lg px-2" :placeholder="selectedTeam.name"
+                v-model="formTeam.name" />
+              <p class="text-sm text-gray-600 px-1">
+                {{ 32 - formTeam.name.length }} characters left
+              </p>
+              <p for="teamColor" class="text-lg pt-2">Pick your color:</p>
               <input type="color" id="teamColor" name="teamColor" class="w-20 h-12 p-0 border-none cursor-pointer"
                 v-model="formTeam.color" />
+              <div class="flex justify-end">
+                <button type="button" :disabled="!formTeam.name.trim()"
+                  class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 self-end"
+                  :class="{ 'cursor-not-allowed bg-red-600 hover:bg-red-600': !formTeam.name.trim() }"
+                  @click="saveTeam()">
+                  Save
+                </button>
+              </div>
             </form>
-            <button type="button" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-              @click="saveTeam()">
-              Save
-            </button>
+
           </div>
         </modal>
 
       </div>
-    </div>
+    </section>
+    <!-- adding/deleting teams -->
+    <section v-if="isIndex" class="flex flex-row justify-center gap-x-8">
+      <div class="flex flex-row items-center cursor-pointer p-2" @click="addTeam()">
+        <Icon icon="ion:plus" />
+        <h2 class="font-semibold text-xl">Add Team</h2>
+      </div>
+      <div class="flex flex-row items-center cursor-pointer p-2" @click="removeTeam()">
+        <Icon icon="ion:minus" />
+        <h2 class="font-semibold text-xl">Remove Team</h2>
+      </div>
+    </section>
 
-  </section>
+  </div>
 </template>
