@@ -3,11 +3,11 @@
     "board": {
         "categories": [
             {
-                "name": "testcategory 1",
+                "name": "Science",
                 "cards": [
                     {
-                        "question": "testquestion 1",
-                        "answer": "testanswer 1",
+                        "question": "This scientist is responsible for the discovery of the E = mc² formula",
+                        "answer": "Who is Albert Einstein?",
                         "points": 100
                     },
                     {

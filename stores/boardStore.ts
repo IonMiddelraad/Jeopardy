@@ -6,7 +6,7 @@ import type { Category } from '~/models/category'
 export interface ApiResponse {
   status: string
   message: string
-  board: Board // Board part of the response
+  board: Board
 }
 
 export const useMyBoardStore = defineStore('board', {
@@ -19,7 +19,17 @@ export const useMyBoardStore = defineStore('board', {
       try {
         const response = await $fetch<ApiResponse>('/boards/testBoard.json')
         if (response.board) {
-          this.boardData = response.board;
+          const enhancedBoard: Board = {
+            categories: response.board.categories.map((category, catIndex) => ({
+              ...category,
+              cards: category.cards.map((card, cardIndex) => ({
+                ...card,
+                id: `${catIndex}-${cardIndex}`,         // Unique string ID
+                available: card.available ?? true,      // Default to true if undefined
+              }))
+            }))
+          }
+          this.boardData = enhancedBoard;
         }
       } catch (error) {
         console.error('Error loading JSON:', error)
