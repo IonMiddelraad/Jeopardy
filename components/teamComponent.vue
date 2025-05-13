@@ -11,14 +11,6 @@ const formTeam = ref<{ name: string; color: string }>({ name: '', color: '#eab30
 
 const isIndex = computed(() => route.path === '/')
 
-function increasePoints(teamId: number) {
-  teamStore.updateTeamPoints(teamId, teamStore.currentActivePoints)
-}
-
-function decreasePoints(teamId: number) {
-  teamStore.updateTeamPoints(teamId, -teamStore.currentActivePoints)
-}
-
 function openModal(team: Team) {
   selectedTeam.value = team
   formTeam.value = { name: team.name, color: team.color || '#eab308' }
@@ -49,25 +41,20 @@ function getTextColorClass(color?: string): string {
 
 <template>
   <section>
+    <!-- Teams at the top -->
     <div class="flex justify-evenly">
       <div v-for="(team, index) in teamStore.teams" :key="index" class="text-center min-w-72">
-        <div class="flex flex-row gap-x-3 items-center justify-between border border-black border-t-0 rounded-b-full px-8 py-2 gap-4"
+        <div class="flex flex-row gap-x-3 border border-black border-t-0 rounded-b-full px-8 py-2 gap-4"
           :style="{ backgroundColor: team.color || '#eab308' }">
-          <Icon :class="{ 'invisible': !teamStore.canChangeScore }" icon="ion:plus" width="24" height="24"
-            class="text-green-600 cursor-pointer" @click="increasePoints(team.id)" />
-          <div class="flex flex-col" :class="getTextColorClass(team.color)">
-            <div class="flex flex-row">
-              <h3 class="font-medium text-xl px-2">{{ team.name }}</h3>
-              <Icon v-if="isIndex" icon="ion:edit" width="28" height="28" @click="openModal(team)"
-                class="cursor-pointer" />
-            </div>
-
-            <p class="text-lg pr-3">$ {{ team.points }}</p>
+          <div class="flex flex-col items-center justify-center mx-auto" :class="getTextColorClass(team.color)">
+            <h3 class="font-medium text-xl px-2">{{ team.name }}</h3>
+            <Icon v-if="isIndex" icon="ion:edit" width="28" height="28" @click="openModal(team)"
+              class="cursor-pointer" />
+            <p v-if="!isIndex" class="text-lg pr-3">$ {{ team.points }}</p>
           </div>
-          <Icon :class="{ 'invisible': !teamStore.canChangeScore }" icon="ion:minus" width="24" height="24"
-            class="text-red-600 cursor-pointer" @click="decreasePoints(team.id)" />
 
         </div>
+        <!-- Edit team modal -->
         <modal :show="showModal" @close="showModal = false" class="text-left">
           <div v-if="selectedTeam">
             <h2 class="text-2xl font-semibold">Edit your Team!</h2>
