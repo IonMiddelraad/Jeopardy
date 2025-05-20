@@ -48,5 +48,6 @@ export const useMyBoardStore = defineStore('board', {
       }
       console.log(tempBoard.categories[0].cards[4].question)
     }
-  }
+  },
+  persist: true,
 })

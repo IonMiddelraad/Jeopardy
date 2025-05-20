@@ -3,15 +3,20 @@ import type { Team } from '~/models/team'
 
 export const useTeamStore = defineStore('team', {
   state: () => ({
-    amountOfTeams: 3 as number,
-    teams: [
-      { id: 0, name: "Team 1", points: 0, color: "#6db7ff" },
-      { id: 1, name: "Team 2", points: 0, color: "#ff6d6e" },
-      { id: 2, name: "Team 3", points: 0 }
-    ] as Team[],
+    teams: [] as Team[],
 
   }),
   actions: {
+    initializeDefaultTeams() {
+      if (this.teams.length === 0) {
+        this.teams = [
+          { id: 0, name: "Team 1", points: 0, color: "#6db7ff" },
+          { id: 1, name: "Team 2", points: 0, color: "#ff6d6e" },
+          { id: 2, name: "Team 3", points: 0, color: "" }
+        ]
+      }
+    },
+
     updateTeam(newTeam: Team) {
       let teamIndex = this.teams.findIndex((team) => team.id == newTeam.id);
       this.teams[teamIndex] = newTeam;
@@ -27,11 +32,19 @@ export const useTeamStore = defineStore('team', {
     },
     addTeam() {
       if (this.teams.length > 4) return;
-      this.teams.push({ id: this.teams.length, name: "Team " + (this.teams.length + 1), points: 0, color: "" });
+      let colors: string[] = ["#6db7ff", "#ff6d6e", "#eab308"]
+      this.teams.push({ id: this.teams.length, name: "Team " + (this.teams.length + 1), points: 0, color: colors[Math.floor(Math.random() * colors.length)] });
     },
     removeTeam() {
       if (this.teams.length < 2) return;
       this.teams.pop();
+    },
+    resetPoints() {
+      this.teams.forEach(team => {
+        team.points = 0
+      })
+
     }
-  }
+  },
+  persist: true
 })

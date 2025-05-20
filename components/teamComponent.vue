@@ -2,6 +2,7 @@
 import { Icon } from '@iconify/vue';
 import modal from './modal.vue';
 import type { Team } from '~/models/team';
+import { Motion } from '@motionone/vue'
 
 const teamStore = useTeamStore();
 const route = useRoute();
@@ -44,15 +45,16 @@ function getTextColorClass(color?: string): string {
   const hex = color || '#ffffff'
   return isDarkColor(hex) ? 'text-white' : 'text-black'
 }
-
 </script>
 
 <template>
-  <div class="select-none">
+  <div class="select-none overflow-hidden relative">
     <!-- Teams at the top -->
-    <section class="flex justify-evenly gap-x-2 px-2">
-      <div v-for="(team, index) in teamStore.teams" :key="index" class="text-center flex-grow min-w-48">
-        <div class="flex flex-row gap-x-3 border border-black border-t-0 rounded-b-full px-8 py-2 gap-4"
+     <ClientOnly>
+    <TransitionGroup name="team" tag="section" class="flex justify-evenly gap-x-2 px-2">
+      <Motion tag="div" v-for="(team, index) in teamStore.teams" :key="index"
+        class="text-center flex-1 min-w-48" >
+        <div class="flex flex-row gap-x-3 border-2 border-black border-t-0 rounded-b-full px-8 py-2 gap-4"
           :style="{ backgroundColor: team.color || '#eab308' }">
           <div class="flex flex-col items-center justify-center mx-auto" :class="getTextColorClass(team.color)">
             <h3 class="font-medium text-xl px-2">{{ team.name }}</h3>
@@ -63,7 +65,6 @@ function getTextColorClass(color?: string): string {
 
         </div>
         <!-- Edit team modal -->
-        
         <modal :show="showModal" @close="showModal = false" class="text-left">
           <div v-if="selectedTeam">
             <h2 class="text-2xl font-semibold">Edit your Team!</h2>
@@ -87,19 +88,20 @@ function getTextColorClass(color?: string): string {
                 </button>
               </div>
             </form>
-
           </div>
         </modal>
 
-      </div>
-    </section>
+      </Motion>
+    </TransitionGroup>
+    </ClientOnly>
     <!-- adding/deleting teams -->
-    <section v-if="isIndex" class="flex flex-row justify-center gap-x-8">
-      <div class="flex flex-row items-center cursor-pointer p-2" @click="addTeam()">
+    <section v-if="isIndex" class="flex flex-row justify-center gap-x-8 p-4">
+      <div class="flex flex-row items-center cursor-pointer text-lg font-semibold border-2 border-black rounded-full px-4 py-2 hover:bg-gray-100" @click="addTeam()">
         <Icon icon="ion:plus" />
+        
         <h2 class="font-semibold text-xl">Add Team</h2>
       </div>
-      <div class="flex flex-row items-center cursor-pointer p-2" @click="removeTeam()">
+      <div class="flex flex-row items-center cursor-pointer text-lg font-semibold border-2 border-black rounded-full px-4 py-2 hover:bg-gray-100" @click="removeTeam()">
         <Icon icon="ion:minus" />
         <h2 class="font-semibold text-xl">Remove Team</h2>
       </div>
@@ -107,3 +109,38 @@ function getTextColorClass(color?: string): string {
 
   </div>
 </template>
+
+<style lang="css">
+.team-enter-active,
+.team-leave-active {
+  transition: all 0.4s ease;
+}
+
+.team-enter-from {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.team-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.team-leave-from {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.team-leave-to {
+  opacity: 0;
+  transform: translateX(100%);
+  position: absolute;
+  width: 100%;
+}
+
+.team-move {
+  transition: transform 0.4s ease;
+}
+</style>

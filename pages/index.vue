@@ -1,12 +1,10 @@
 <script setup lang="ts">
 const boardStore = useMyBoardStore();
+const teamStore = useTeamStore();
 
 function resetBoard() {
   boardStore.fetchBoard();
-}
-
-function startGame() {
-
+  teamStore.resetPoints();
 }
 </script>
 

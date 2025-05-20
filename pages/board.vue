@@ -49,22 +49,26 @@ onMounted(async () => {
   <div class="mx-auto select-none">
 
     <!-- grid with category columns -->
-    <div class="grid grid-cols-5 mx-4">
-      <div v-for="(category, index) in boardStore.boardData?.categories" :key="index"
-        class=" p-4 flex flex-col items-center">
+    <ClientOnly>
 
-        
-        <h1 class="text-xl font-bold text-center mb-2">{{ category.name }}</h1>
+      <div class="grid grid-cols-5 mx-4">
+        <div v-for="(category, index) in boardStore.boardData?.categories" :key="index"
+          class=" p-4 flex flex-col items-center">
 
-        <!-- cards in columns -->
-        <div class="flex flex-col gap-2 w-full">
-          <p v-for="(card, index) in category.cards" :key="index" class="bg-blue-400 text-center p-2 cursor-pointer"
-            :class="{ 'opacity-50 cursor-default': !card.available }" @click="handleCardClick(card)">
-            ${{ card.points }}
-          </p>
+
+          <h1 class="text-xl font-bold text-center mb-2">{{ category.name }}</h1>
+
+          <!-- cards in columns -->
+          <div class="flex flex-col gap-2 w-full">
+            <p v-for="(card, index) in category.cards" :key="index" class="bg-blue-400 text-center p-2 cursor-pointer"
+              :class="{ 'opacity-50 cursor-default': !card.available }" @click="handleCardClick(card)">
+              ${{ card.points }}
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </ClientOnly>
+
     <!-- question and answer -->
     <section v-if="chosenCard">
       <div class="flex flex-col items-center mt-4 pt-2 pb-8 mb-4 gap-y-2 ">
@@ -73,7 +77,7 @@ onMounted(async () => {
 
         <h2 v-if="showAnswer" class="font-bold text-3xl">{{ chosenCard?.answer }}</h2>
         <button v-if="!showAnswer"
-          class="text-lg font-semibold border-2 border-black rounded-full cursor-pointer px-4 py-2"
+          class="text-lg font-semibold border-2 border-black rounded-full cursor-pointer px-4 py-2 hover:bg-gray-100"
           @click="toggleAnswer(chosenCard)">Reveal Answer</button>
 
       </div>
@@ -81,7 +85,7 @@ onMounted(async () => {
     <!-- Giving points -->
     <section>
       <div v-if="showAnswer && chosenCard" class="flex flex-row gap-x-4 justify-center mt-8">
-        <div v-for="(team, index) in teamStore.teams" :key="index" class="text-center min-w-56">
+        <div v-for="(team, index) in teamStore.teams" :key="index" class="text-center w-56">
           <h1 class="text-lg font-semibold border-2 border-black rounded-full cursor-pointer px-4 py-2"
             :class="getColorClass(index)" @click="cycleColor(index, team.id, chosenCard.points)">{{ team.name }}</h1>
         </div>
