@@ -32,7 +32,7 @@ export const useTeamStore = defineStore('team', {
     },
     addTeam() {
       if (this.teams.length > 4) return;
-      let colors: string[] = ["#6db7ff", "#ff6d6e", "#eab308"]
+      let colors: string[] = ["#6db7ff", "#ff6d6e", "#eab308", "#00dd05"]
       this.teams.push({ id: this.teams.length, name: "Team " + (this.teams.length + 1), points: 0, color: colors[Math.floor(Math.random() * colors.length)] });
     },
     removeTeam() {

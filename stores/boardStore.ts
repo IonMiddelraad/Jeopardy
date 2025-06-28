@@ -11,29 +11,39 @@ export interface ApiResponse {
 
 export const useMyBoardStore = defineStore('board', {
   state: () => ({
-    data: null,
     boardData: null as Board | null,
+    categories: [] as Category[],
   }),
   actions: {
     async fetchBoard() {
       try {
         const response = await $fetch<ApiResponse>('/boards/testBoard.json')
         if (response.board) {
+          const newCategories: Category[] = [];
+
           const enhancedBoard: Board = {
-            categories: response.board.categories.map((category, catIndex) => ({
-              ...category,
-              cards: category.cards.map((card, cardIndex) => ({
-                ...card,
-                id: `${catIndex}-${cardIndex}`,         // Unique string ID
-                available: card.available ?? true,      // Default to true if undefined
-              }))
-            }))
-          }
+            categories: response.board.categories.map((category, catIndex) => {
+              const enhancedCategory: Category = {
+                ...category,
+                cards: category.cards.map((card, cardIndex) => ({
+                  ...card,
+                  id: `${catIndex}-${cardIndex}`,
+                  available: card.available ?? true,
+                }))
+              };
+
+              // Collect the enhanced category
+              newCategories.push(enhancedCategory);
+              return enhancedCategory;
+            })
+          };
           this.boardData = enhancedBoard;
+          this.categories = newCategories;
         }
       } catch (error) {
         console.error('Error loading JSON:', error)
       }
+
     },
     setBoardData(newBoard: any) {
       if (!newBoard) return;
@@ -47,6 +57,13 @@ export const useMyBoardStore = defineStore('board', {
         }
       }
       console.log(tempBoard.categories[0].cards[4].question)
+    },
+    setCategoriesID() {
+      this.categories.forEach((category, index) => {
+        if (!category.id) {
+          category.id = `cat-${Date.now()}-${index}`
+        }
+      })
     }
   },
   persist: true,
