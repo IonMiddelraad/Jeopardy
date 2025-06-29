@@ -1,6 +1,8 @@
 {
-    "settings": {},
     "board": {
+        "name": "testBoard",
+        "settings": {},
+        "id": "exampleboard1",
         "categories": [
             {
                 "name": "Science",

@@ -9,10 +9,11 @@ export interface ApiResponse {
   board: Board
 }
 
-export const useMyBoardStore = defineStore('board', {
+export const useGameStore = defineStore('game', {
   state: () => ({
     boardData: null as Board | null,
     categories: [] as Category[],
+    boards: [] as Board[],
   }),
   actions: {
     async fetchBoard() {
@@ -20,14 +21,18 @@ export const useMyBoardStore = defineStore('board', {
         const response = await $fetch<ApiResponse>('/boards/testBoard.json')
         if (response.board) {
           const newCategories: Category[] = [];
+          const newBoard: Board[] = [];
 
           const enhancedBoard: Board = {
+            name: response.board.name,
+            settings: response.board.settings,
+            id: response.board.id ?? `${response.board.name}-${Date.now()}`,
             categories: response.board.categories.map((category, catIndex) => {
               const enhancedCategory: Category = {
                 ...category,
                 cards: category.cards.map((card, cardIndex) => ({
                   ...card,
-                  id: `${catIndex}-${cardIndex}`,
+                  id: card.id ?? `${catIndex}-${cardIndex}`,
                   available: card.available ?? true,
                 }))
               };
@@ -37,8 +42,10 @@ export const useMyBoardStore = defineStore('board', {
               return enhancedCategory;
             })
           };
+          newBoard.push(enhancedBoard);
           this.boardData = enhancedBoard;
           this.categories = newCategories;
+          this.boards = newBoard;
         }
       } catch (error) {
         console.error('Error loading JSON:', error)
@@ -50,13 +57,11 @@ export const useMyBoardStore = defineStore('board', {
       let tempBoard: Board = newBoard.board;
       for (let category of newBoard.board.categories) {
         let tempCat: Category = category;
-        console.log(tempCat)
         for (let card of category.questions) {
           let tempCard: Card = card;
           tempCard.available = true;
         }
       }
-      console.log(tempBoard.categories[0].cards[4].question)
     },
     setCategoriesID() {
       this.categories.forEach((category, index) => {

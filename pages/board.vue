@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { Card } from '~/models/card';
 
-const boardStore = useMyBoardStore();
+const gameStore = useGameStore();
 const teamStore = useTeamStore();
 const chosenCard = ref<Card>();
 const showAnswer = ref<boolean>(false);
@@ -38,8 +38,8 @@ function getColorClass(index: number) {
 }
 
 onMounted(async () => {
-  if (!boardStore.boardData) {
-    await boardStore.fetchBoard();
+  if (!gameStore.boardData) {
+    await gameStore.fetchBoard();
   }
   colorIndices.value = teamStore.teams.map(() => 0)
 })
@@ -52,7 +52,7 @@ onMounted(async () => {
     <ClientOnly>
 
       <div class="grid grid-cols-5 mx-4">
-        <div v-for="(category, index) in boardStore.boardData?.categories" :key="index"
+        <div v-for="(category, index) in gameStore.boardData?.categories" :key="index"
           class=" p-4 flex flex-col items-center">
 
 

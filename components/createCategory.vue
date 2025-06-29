@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { reactive } from 'vue'
 
-const boardStore = useMyBoardStore();
+const gameStore = useGameStore();
 const showJson = ref(false);
 
 const newCategory = reactive({
@@ -32,7 +32,7 @@ const resetCategory = () => {
 
 const submitCategory = () => {
   newCategory.id = newCategory.name;
-  boardStore.categories.push(JSON.parse(JSON.stringify(newCategory)))
+  gameStore.categories.push(JSON.parse(JSON.stringify(newCategory)))
   // Reset form
   resetCategory();
 }
