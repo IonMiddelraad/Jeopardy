@@ -1,11 +1,19 @@
 {
     "board": {
         "name": "testBoard",
-        "settings": {},
+        "settings": {
+            "dailyDouble": false,
+            "finalJep": {
+                "enable": false
+            },
+            "round1Cat": [],
+            "round2Cat": []
+        },
         "id": "exampleboard1",
         "categories": [
             {
                 "name": "Science",
+                "id": "science123",
                 "cards": [
                     {
                         "question": "This scientist is responsible for the discovery of the E = mc² formula",
@@ -36,6 +44,7 @@
             },
             {
                 "name": "testcategory 2",
+                "id": "test2",
                 "cards": [
                     {
                         "question": "testquestion 1",
@@ -66,6 +75,7 @@
             },
             {
                 "name": "testcategory 3",
+                "id": "test3",
                 "cards": [
                     {
                         "question": "testquestion 1",
@@ -96,6 +106,7 @@
             },
             {
                 "name": "testcategory 4",
+                "id": "test4",
                 "cards": [
                     {
                         "question": "testquestion 1",
@@ -126,6 +137,7 @@
             },
             {
                 "name": "testcategory 5",
+                "id": "test5",
                 "cards": [
                     {
                         "question": "testquestion 1",

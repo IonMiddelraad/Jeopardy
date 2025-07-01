@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Icon } from '@iconify/vue';
-import modal from './modal.vue';
+import modal from './Modal.vue';
 import type { Team } from '~/models/team';
 import { Motion } from '@motionone/vue'
 
@@ -65,7 +65,7 @@ function getTextColorClass(color?: string): string {
 
         </div>
         <!-- Edit team modal -->
-        <modal :show="showModal" @close="showModal = false" class="text-left">
+        <modal :show="showModal" :can-close="true" @close="showModal = false" class="text-left">
           <div v-if="selectedTeam">
             <h2 class="text-2xl font-semibold">Edit your Team!</h2>
             <form class="flex flex-col">

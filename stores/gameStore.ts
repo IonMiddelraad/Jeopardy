@@ -18,7 +18,7 @@ export const useGameStore = defineStore('game', {
   actions: {
     async fetchBoard() {
       try {
-        const response = await $fetch<ApiResponse>('/boards/testBoard.json')
+        const response = await $fetch<ApiResponse>('/boards/exampleBoard.json')
         if (response.board) {
           const newCategories: Category[] = [];
           const newBoard: Board[] = [];

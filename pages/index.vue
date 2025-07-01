@@ -6,51 +6,21 @@ import type { Category } from '~/models/category';
 const gameStore = useGameStore();
 const teamStore = useTeamStore();
 const importErrorMessage = ref<string>("");
+const showBoardEditModal = ref<boolean>(false);
+const selectedBoard = ref<Board>()
 
 function resetBoard() {
   gameStore.fetchBoard();
   teamStore.resetPoints();
 }
 
-const categoryList = computed(() => {
-  let tempList = gameStore.categories;
-  return tempList
-})
-
-const boardList = computed(() => {
-  let tempList = gameStore.boards;
-  return tempList
-})
-
-const deleteCategory = () => {
-
+const deleteBoard = (index: number) => {
+  gameStore.boards.splice(index, 1)
 }
 
-const editCategory = () => {
-
-}
-
-function exportCategory(item: Category | Board) {
-  const dataStr = JSON.stringify(item, null, 2); // Pretty-print JSON
-  const blob = new Blob([dataStr], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement("a");
-  link.href = url;
-
-  const isBoard = "categories" in item;
-  const fileName = item.name?.trim()
-    ? `${item.name}.json`
-    : isBoard
-      ? "board.json"
-      : "category.json";
-
-  link.download = fileName;
-
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+const editBoard = (boardIndex: number) => {
+  selectedBoard.value = gameStore.boards[boardIndex];
+  showBoardEditModal.value = true;
 }
 
 function importFile(event: Event) {
@@ -66,14 +36,12 @@ function importFile(event: Event) {
       if ('categories' in json) {
         // Detected as a Board
         const board = json as Board
-        console.log('Imported Board:', board)
-        // You could update your board store here
+        board.id = `brd-${Date.now()}-${gameStore.boards.length}`
         gameStore.boards.push(board)
       } else if ('cards' in json) {
         // Detected as a single Category
         const category = json as Category
-        console.log('Imported Category:', category)
-        // Example: push to category list
+        category.id = `cat-${Date.now()}-${gameStore.categories.length}`
         gameStore.categories.push(category)
       } else {
         importErrorMessage.value = "Could not read file format"
@@ -131,7 +99,7 @@ onMounted(() => {
       <div class="">
         <div class="flex justify-between">
           <h1 class="text-2xl font-semibold py-2">Select Categories or Board</h1>
-            <p v-show="importErrorMessage" class="text-red-500 font-bold">{{ importErrorMessage }}</p>
+          <p v-show="importErrorMessage" class="text-red-500 font-bold">{{ importErrorMessage }}</p>
           <div class="flex flex-col my-auto">
             <!-- <input type="file" accept=".json" class="" @change="importFile" /> -->
             <input type="file" accept=".json" id="jsonUpload" @change="importFile" class="hidden" />
@@ -145,54 +113,31 @@ onMounted(() => {
         </div>
         <!-- Categories -->
         <div>
-          <h2 class="text-xl font-semibold">Categories</h2>
-          <div v-for="category in categoryList"
-            class="grid grid-cols-[4fr_2fr_2fr_1fr] gap-x-2 my-2 mx-auto h-auto rounded bg-gray-100">
-            <div class="my-auto px-2">
-              <input type="checkbox" :id="category.id">
-              <label :for="category.id">{{ category.name }}</label>
-            </div>
-            <button class="bg-gray-400 text-white m-auto px-2 rounded hover:bg-gray-500 font-medium border border-black"
-              @click="exportCategory(category)">
-              export
-            </button>
-            <div class="flex flex-col m-auto px-2">
-              <div>
-                <input type="radio" :name="category.id + 'Round'" :id="category.id + 'Round1'" value="Round 1">
-                <label :for="category.id + 'Round1'">Round 1</label>
-              </div>
-              <div>
-                <input type="radio" :name="category.id + 'Round'" :id="category.id + 'Round2'" value="Round 2">
-                <label :for="category.id + 'Round2'">Round 2</label>
-              </div>
-
-            </div>
-            <Icon icon="ion:trash" width="20" height="20" @click="deleteCategory()" class="cursor-pointer m-auto" />
-
-          </div>
+          <CategorySelection :category-list="gameStore.categories"></CategorySelection>
         </div>
         <!-- Boards -->
         <div>
           <h2 class="text-xl font-semibold mt-4">Boards</h2>
-          <div v-for="board in boardList"
-            class="grid grid-cols-[4fr_2fr_2fr_1fr] gap-x-2 my-2 mx-auto min-h-12 h-auto rounded bg-gray-100">
-            <div class="my-auto px-2">
-              <input type="checkbox" :id="board.id">
+          <div v-for="(board, index) in gameStore.boards"
+            class="grid grid-cols-[6fr_1fr_1fr_1fr] gap-x-2 my-2 mx-auto min-h-12 h-auto rounded bg-gray-100">
+            <div class="my-auto px-2 font-medium">
+              <input type="checkbox" :id="board.id" class="accent-green-600">
               <label :for="board.id">{{ board.name }}</label>
             </div>
-            <button class="bg-gray-400 text-white m-auto px-2 rounded hover:bg-gray-500 font-medium border border-black"
-              @click="exportCategory(board)">
-              export
-            </button>
-            <Icon icon="ion:settings-outline" width="20" height="20" @click="editCategory()"
+            
+            <Icon icon="ion:download-outline" width="20" height="20" @click="exportItem(board)"
+              class="cursor-pointer m-auto" />
+            <Icon icon="ion:settings-outline" width="20" height="20" @click="editBoard(index)"
               class="cursor-pointer m-auto" />
 
-            <Icon icon="ion:trash" width="20" height="20" @click="deleteCategory()" class="cursor-pointer m-auto" />
+            <Icon icon="ion:trash" width="20" height="20" @click="deleteBoard(index)" class="cursor-pointer m-auto" />
           </div>
         </div>
 
       </div>
     </section>
-
+    <Modal :show="showBoardEditModal" :can-close="false" @close="showBoardEditModal = false" class="">
+      <EditBoard :board="selectedBoard" @close="showBoardEditModal = false"></EditBoard>
+    </Modal>
   </div>
 </template>

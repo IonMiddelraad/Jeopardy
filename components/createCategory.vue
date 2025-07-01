@@ -31,7 +31,7 @@ const resetCategory = () => {
 }
 
 const submitCategory = () => {
-  newCategory.id = newCategory.name;
+  newCategory.id = `cat-${Date.now()}-${newCategory.name}`;
   gameStore.categories.push(JSON.parse(JSON.stringify(newCategory)))
   // Reset form
   resetCategory();
@@ -70,9 +70,7 @@ const toggleJson = () => {
     </form>
     <!-- Optional preview -->
     <div class="py-10">
-      <button type="button"
-      @click="toggleJson"
-      class="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700">
+      <button type="button" @click="toggleJson" class="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700">
         Show .JSON
       </button>
       <pre v-show="showJson" class="my-2 bg-gray-100 p-4 rounded text-sm">{{ newCategory }}</pre>
