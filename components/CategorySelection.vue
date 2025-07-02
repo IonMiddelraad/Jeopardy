@@ -7,6 +7,7 @@ const props = defineProps<{
 }>()
 
 const gameStore = useGameStore();
+const showEditCategory = ref<Category>();
 
 const newBoard = reactive({
   categories: [] as Category[],
@@ -24,11 +25,20 @@ const selectedCategoryIds = computed({
 const isSelected = (id: string) => { return newBoard.categories.some((c) => c.id === id) }
 
 const editCategory = (index: number) => {
-
+  if (gameStore.categories[index] === showEditCategory.value) {
+    showEditCategory.value = undefined;
+  } else {
+    showEditCategory.value = gameStore.categories[index];
+  }
 }
 
 const deleteCategory = (index: number) => {
   gameStore.categories.splice(index, 1)
+}
+
+const updateCategory = (updatedCategory: Category) => {
+  let index = gameStore.categories.findIndex((category) => category.id === updatedCategory.id);
+  gameStore.categories.splice(index, 1, updatedCategory)
 }
 
 const createBoard = () => {
@@ -77,7 +87,8 @@ function getCategoryById(id: string) {
   <div>
     <h2 class="text-xl font-semibold">Categories</h2>
 
-    <div v-for="(category, index) in categoryList" class="grid grid-cols-[6fr_1fr_1fr_1fr] gap-x-2 py-2 my-2 mx-auto h-auto rounded bg-gray-100">
+    <div v-for="(category, index) in categoryList"
+      class="grid grid-cols-[6fr_1fr_1fr_1fr] gap-x-2 py-2 my-2 mx-auto h-auto rounded bg-gray-100">
       <div class="my-auto px-2 font-medium">
         <input type="checkbox" :id="category.id" class="accent-green-600"
           :disabled="!isSelected(category.id) && newBoard.categories.length >= 10" v-model="selectedCategoryIds"
@@ -92,10 +103,14 @@ function getCategoryById(id: string) {
 
       <Icon icon="ion:trash" width="20" height="20" @click="deleteCategory(index)" class="cursor-pointer m-auto" />
 
+      <Modal :show="showEditCategory === category" width="75%" :can-close="false" @close="showEditCategory = undefined" class="">
+        <EditCategory :category="category" @close="showEditCategory = undefined" @update="updateCategory"></EditCategory>
+      </Modal>
     </div>
     <button type="submit" @click="createBoard()"
       class="bg-green-600 text-white px-6 py-2 border border-black rounded hover:bg-green-700">
       Create Board
     </button>
+
   </div>
 </template>

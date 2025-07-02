@@ -136,7 +136,7 @@ onMounted(() => {
 
       </div>
     </section>
-    <Modal :show="showBoardEditModal" :can-close="false" @close="showBoardEditModal = false" class="">
+    <Modal :show="showBoardEditModal" width="75%" :can-close="false" @close="showBoardEditModal = false">
       <EditBoard :board="selectedBoard" @close="showBoardEditModal = false"></EditBoard>
     </Modal>
   </div>

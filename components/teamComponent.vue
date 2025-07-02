@@ -65,13 +65,13 @@ function getTextColorClass(color?: string): string {
 
         </div>
         <!-- Edit team modal -->
-        <modal :show="showModal" :can-close="true" @close="showModal = false" class="text-left">
+        <modal :show="showModal" :can-close="true" width="500px" @close="showModal = false" class="text-left">
           <div v-if="selectedTeam">
             <h2 class="text-2xl font-semibold">Edit your Team!</h2>
             <form class="flex flex-col">
               <p for="teamName" class="text-lg pt-2">Team name:</p>
               <input type="text" id="teamName" name="teamName" maxlength="32"
-                class="border border-black rounded text-lg px-2" :placeholder="selectedTeam.name"
+                class="border border-black rounded text-lg max-w-64 px-2" :placeholder="selectedTeam.name"
                 v-model="formTeam.name" />
               <p class="text-sm text-gray-600 px-1">
                 {{ 32 - formTeam.name.length }} characters left

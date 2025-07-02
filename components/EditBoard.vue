@@ -12,6 +12,7 @@ if (!props.board) {
 }
 
 const gameStore = useGameStore();
+const showCategoryEditModal = ref<Category>();
 
 const editingBoard = reactive({
   id: props.board.id ?? '' as string,
@@ -36,15 +37,23 @@ const roundChanged = (id: string, setRound: number) => {
 }
 
 const editCategory = (index: number) => {
-
+  if (editingBoard.categories[index] === showCategoryEditModal.value) {
+    showCategoryEditModal.value = undefined;
+  } else {
+    showCategoryEditModal.value = editingBoard.categories[index];
+  }
 }
 
 const deleteCategory = (index: number) => {
   editingBoard.categories.splice(index, 1);
 }
 
+const updateCategory = (updatedCategory: Category) => {
+  let index = editingBoard.categories.findIndex((category) => category.id === updatedCategory.id);
+  editingBoard.categories.splice(index, 1, updatedCategory);
+}
+
 const saveBoard = () => {
-  console.log(editingBoard)
   let index = gameStore.boards.findIndex((board) => board.id === editingBoard.id);
   gameStore.boards.splice(index, 1, editingBoard);
   emit("close")
@@ -87,49 +96,55 @@ const resetBoard = () => {
         <!-- category list -->
         <h2 class="text-xl font-semibold">Categories</h2>
 
-        <div v-for="(category, index) in editingBoard.categories"
-          class="grid grid-cols-[4fr_2fr_2fr_1fr] gap-x-2 py-2 my-2 mx-auto h-auto rounded bg-gray-100">
+        <div v-for="(category, index) in editingBoard.categories" class="">
+          <div class="grid grid-cols-[4fr_2fr_2fr_1fr] gap-x-2 my-2 mx-auto h-auto rounded bg-gray-100">
+            <div class="my-auto px-2 cursor-default">
+              <h3 class="font-medium">{{ category.name }}</h3>
+            </div>
 
-          <div class="my-auto px-2 cursor-default">
-            <h3 class="font-medium">{{ category.name }}</h3>
+            <Icon icon="ion:settings-outline" width="20" height="20" @click="editCategory(index)"
+              class="cursor-pointer m-auto" />
+
+            <!-- Round Selection -->
+            <div class="flex flex-col m-auto">
+              <div>
+                <input type="radio" :name="category.id + 'Round'" :id="category.id + 'Round1'" value="Round 1"
+                  @change="roundChanged(category.id, 1)" class="accent-blue-500"
+                  :checked="editingBoard.settings.round1Cat.includes(category.id)">
+                <label :for="category.id + 'Round1'">Round 1</label>
+              </div>
+              <div>
+                <input type="radio" :name="category.id + 'Round'" :id="category.id + 'Round2'" value="Round 2"
+                  @change="roundChanged(category.id, 2)" class="accent-blue-500"
+                  :checked="editingBoard.settings.round2Cat.includes(category.id)">
+                <label :for="category.id + 'Round2'">Round 2</label>
+              </div>
+              <div>
+                <input type="radio" :name="category.id + 'Round'" :id="category.id + 'Random'" value="Random"
+                  @change="roundChanged(category.id, 0)" class="accent-blue-500"
+                  :checked="!editingBoard.settings.round1Cat.includes(category.id) && !editingBoard.settings.round2Cat.includes(category.id)">
+                <label :for="category.id + 'Random'">Random</label>
+              </div>
+
+            </div>
+            <Icon icon="ion:trash" width="20" height="20" @click="deleteCategory(index)"
+              class="cursor-pointer m-auto" />
+
           </div>
 
-          <Icon icon="ion:settings-outline" width="20" height="20" @click="editCategory(index)"
-            class="cursor-pointer m-auto" />
-
-          <!-- Round Selection -->
-          <div class="flex flex-col m-auto">
-            <div>
-              <input type="radio" :name="category.id + 'Round'" :id="category.id + 'Round1'" value="Round 1"
-                @change="roundChanged(category.id, 1)" class="accent-blue-500"
-                :checked="editingBoard.settings.round1Cat.includes(category.id)">
-              <label :for="category.id + 'Round1'">Round 1</label>
-            </div>
-            <div>
-              <input type="radio" :name="category.id + 'Round'" :id="category.id + 'Round2'" value="Round 2"
-                @change="roundChanged(category.id, 2)" class="accent-blue-500"
-                :checked="editingBoard.settings.round2Cat.includes(category.id)">
-              <label :for="category.id + 'Round2'">Round 2</label>
-            </div>
-            <div>
-              <input type="radio" :name="category.id + 'Round'" :id="category.id + 'Random'" value="Random"
-                @change="roundChanged(category.id, 0)" class="accent-blue-500"
-                :checked="!editingBoard.settings.round1Cat.includes(category.id) && !editingBoard.settings.round2Cat.includes(category.id)">
-              <label :for="category.id + 'Random'">Random</label>
-            </div>
-
-          </div>
-          <Icon icon="ion:trash" width="20" height="20" @click="deleteCategory(index)" class="cursor-pointer m-auto" />
+          <EditCategory v-if="showCategoryEditModal === category" :category="showCategoryEditModal"
+            @close="showCategoryEditModal = undefined" @update="updateCategory">
+          </EditCategory>
         </div>
 
       </div>
-      <div class="flex gap-x-4">
+      <div class="flex gap-x-4 border-t py-2">
         <button type="submit"
-          class="bg-green-600 text-white font-medium px-6 py-2 border border-black rounded hover:bg-green-700">
-          Save
+          class="bg-green-600 text-white font-medium w-28 py-2 border border-black rounded hover:bg-green-700">
+          Save Board
         </button>
         <button type="button" @click="resetBoard()"
-          class="bg-red-600 text-white font-medium px-6 py-2 border border-black rounded hover:bg-red-700">
+          class="bg-red-600 text-white font-medium w-28 py-2 border border-black rounded hover:bg-red-700">
           Cancel
         </button>
       </div>
