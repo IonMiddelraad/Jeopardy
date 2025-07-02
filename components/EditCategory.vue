@@ -33,6 +33,7 @@ function removeQuestion(index: number) {
 }
 
 function saveCategory() {
+  editingCategory.id = `cat-${Date.now()}`
   emit('update', editingCategory);
   emit('close');
 }

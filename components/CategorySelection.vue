@@ -8,6 +8,8 @@ const props = defineProps<{
 
 const gameStore = useGameStore();
 const showEditCategory = ref<Category>();
+const addCategoryToBoardObj = ref<Category>();
+const selectedBoard = ref<Board>();
 
 const newBoard = reactive({
   categories: [] as Category[],
@@ -63,6 +65,33 @@ const createBoard = () => {
   resetNewBoard()
 }
 
+const toggleAddCategoryToBoard = (category?: Category) => {
+  if (category) {
+    addCategoryToBoardObj.value = category;
+    return
+  }
+  addCategoryToBoardObj.value = undefined;
+}
+
+const addCategoryToBoard = (category: Category, boardID: string | undefined) => {
+  if (!boardID) {
+    return
+  }
+  gameStore.boards.forEach((board) => { console.log(board.id) });
+  let index = gameStore.boards.findIndex((board: Board) => board.id.toString() === boardID.toString());
+  if (!boardID || index < 0) {
+    toggleAddCategoryToBoard()
+    console.log("undefined", boardID, index)
+    return
+  }
+  if (gameStore.boards[index].categories.length < 10 && !gameStore.boards[index].categories.includes(category)) {
+    gameStore.boards[index].categories.push(category)
+    console.log("pushed")
+  }
+  toggleAddCategoryToBoard()
+  console.log("ended", addCategoryToBoardObj.value)
+}
+
 function resetNewBoard() {
   newBoard.categories = [];
 }
@@ -88,7 +117,7 @@ function getCategoryById(id: string) {
     <h2 class="text-xl font-semibold">Categories</h2>
 
     <div v-for="(category, index) in categoryList"
-      class="grid grid-cols-[6fr_1fr_1fr_1fr] gap-x-2 py-2 my-2 mx-auto h-auto rounded bg-gray-100">
+      class="grid grid-cols-[6fr_1fr_1fr_1fr_1fr] gap-x-2 py-2 my-2 mx-auto h-auto rounded bg-gray-100">
       <div class="my-auto px-2 font-medium">
         <input type="checkbox" :id="category.id" class="accent-green-600"
           :disabled="!isSelected(category.id) && newBoard.categories.length >= 10" v-model="selectedCategoryIds"
@@ -96,19 +125,48 @@ function getCategoryById(id: string) {
         <label :for="category.id">{{ category.name }}</label>
       </div>
 
-      <Icon icon="ion:download-outline" width="20" height="20" @click="exportItem(category)"
-        class="cursor-pointer m-auto" />
-      <Icon icon="ion:settings-outline" width="20" height="20" @click="editCategory(index)"
-        class="cursor-pointer m-auto" />
+      <div class="cursor-pointer m-auto" title="Edit Category">
+        <Icon icon="material-symbols:edit-square-outline" width="20" height="20" @click="editCategory(index)" />
+      </div>
+      <div class="cursor-pointer m-auto" title="Add to Board">
+        <Icon icon="material-symbols:add-2-rounded" width="20" height="20" @click="toggleAddCategoryToBoard(category)" />
+      </div>
+      <div class="cursor-pointer m-auto" title="Download as JSON">
+        <Icon icon="material-symbols:download-rounded" width="20" height="20" @click="exportItem(category)" />
+      </div>
 
-      <Icon icon="ion:trash" width="20" height="20" @click="deleteCategory(index)" class="cursor-pointer m-auto" />
+      <div class="cursor-pointer m-auto" title="Delete Category">
+        <Icon icon="ion:trash" width="20" height="20" @click="deleteCategory(index)" />
+      </div>
 
-      <Modal :show="showEditCategory === category" width="75%" :can-close="false" @close="showEditCategory = undefined" class="">
-        <EditCategory :category="category" @close="showEditCategory = undefined" @update="updateCategory"></EditCategory>
+      <!-- modals -->
+      <Modal :show="showEditCategory === category" width="75%" :can-close="false" @close="showEditCategory = undefined"
+        class="">
+        <EditCategory :category="category" @close="showEditCategory = undefined" @update="updateCategory">
+        </EditCategory>
+      </Modal>
+      <Modal :show="addCategoryToBoardObj === category" width="50%" :can-close="true" @close="toggleAddCategoryToBoard()"
+        class="">
+        <div class="flex flex-col gap-y-2">
+          <div>
+            <h3 class="font-medium text-lg">Select Board</h3>
+            <p class="text-sm text-gray-500">Choose a Board to add the Category to. The Board cannot be full (have 10
+              Categories).</p>
+          </div>
+          <select v-model="selectedBoard" class="w-52 h-8 cursor-pointer border-2 border-black rounded">
+            <option v-for="board in gameStore.boards" :value="board" :disabled="board.categories.length >= 10">
+              {{ board.categories.length < 10 ? board.name : `Full - ${board.name}` }} </option>
+          </select>
+          <button @click="addCategoryToBoard(category, selectedBoard?.id)"
+            :disabled="(selectedBoard?.categories?.length ?? 0) >= 10"
+            class="bg-green-600 text-white w-28  py-2 border border-black rounded hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-500">
+            Add Category
+          </button>
+        </div>
       </Modal>
     </div>
     <button type="submit" @click="createBoard()"
-      class="bg-green-600 text-white px-6 py-2 border border-black rounded hover:bg-green-700">
+      class="bg-green-600 text-white w-28 py-2 border border-black rounded hover:bg-green-700">
       Create Board
     </button>
 

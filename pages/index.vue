@@ -124,11 +124,13 @@ onMounted(() => {
               <input type="checkbox" :id="board.id" class="accent-green-600">
               <label :for="board.id">{{ board.name }}</label>
             </div>
-            
-            <Icon icon="ion:download-outline" width="20" height="20" @click="exportItem(board)"
-              class="cursor-pointer m-auto" />
-            <Icon icon="ion:settings-outline" width="20" height="20" @click="editBoard(index)"
-              class="cursor-pointer m-auto" />
+            <div class="cursor-pointer m-auto" title="Download as JSON">
+              <Icon icon="material-symbols:download-rounded" width="20" height="20" @click="exportItem(board)" />
+            </div>
+            <div class="cursor-pointer m-auto" title="Settings">
+              <Icon icon="ion:settings-outline" width="20" height="20" @click="editBoard(index)" />
+            </div>
+
 
             <Icon icon="ion:trash" width="20" height="20" @click="deleteBoard(index)" class="cursor-pointer m-auto" />
           </div>

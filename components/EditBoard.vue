@@ -36,6 +36,16 @@ const roundChanged = (id: string, setRound: number) => {
   }
 }
 
+const addCategory = () => {
+  if (editingBoard.categories.length < 10) {
+    editingBoard.categories.push({
+      id: `cat-${Date.now()}-${editingBoard.categories.length}`,
+      name: "New Category",
+      cards: []
+    })
+  }
+}
+
 const editCategory = (index: number) => {
   if (editingBoard.categories[index] === showCategoryEditModal.value) {
     showCategoryEditModal.value = undefined;
@@ -45,12 +55,22 @@ const editCategory = (index: number) => {
 }
 
 const deleteCategory = (index: number) => {
+  editingBoard.settings.round1Cat = editingBoard.settings.round1Cat.filter((existingId: string) => existingId !== editingBoard.categories[index].id)
+  editingBoard.settings.round2Cat = editingBoard.settings.round2Cat.filter((existingId: string) => existingId !== editingBoard.categories[index].id)
   editingBoard.categories.splice(index, 1);
 }
 
 const updateCategory = (updatedCategory: Category) => {
   let index = editingBoard.categories.findIndex((category) => category.id === updatedCategory.id);
   editingBoard.categories.splice(index, 1, updatedCategory);
+}
+
+const addCategoryToStore = (category: Category) => {
+  if (gameStore.categories.includes(category)) {
+    return
+  } else {
+    gameStore.categories.push(category);
+  }
 }
 
 const saveBoard = () => {
@@ -97,38 +117,52 @@ const resetBoard = () => {
         <h2 class="text-xl font-semibold">Categories</h2>
 
         <div v-for="(category, index) in editingBoard.categories" class="">
-          <div class="grid grid-cols-[4fr_2fr_2fr_1fr] gap-x-2 my-2 mx-auto h-auto rounded bg-gray-100">
+          <div class="grid grid-cols-[4fr_1fr_1fr_1fr_2fr_1fr] gap-x-2 my-2 mx-auto h-auto rounded bg-gray-100">
             <div class="my-auto px-2 cursor-default">
               <h3 class="font-medium">{{ category.name }}</h3>
             </div>
 
-            <Icon icon="ion:settings-outline" width="20" height="20" @click="editCategory(index)"
-              class="cursor-pointer m-auto" />
+            <!-- icons -->
+            <div class="cursor-pointer m-auto" title="Add to all Categories">
+              <Icon icon="material-symbols:arrow-upward-rounded" width="25" height="25"
+                @click="addCategoryToStore(category)" />
+            </div>
+            <div class="cursor-pointer m-auto" title="Download as JSON">
+              <Icon icon="material-symbols:download-rounded" width="25" height="25" @click="exportItem(category)" />
+            </div>
+            <div class="cursor-pointer m-auto" title="Edit Categroy">
+              <Icon icon="material-symbols:edit-square-outline" width="25" height="25" @click="editCategory(index)" />
+            </div>
+
 
             <!-- Round Selection -->
-            <div class="flex flex-col m-auto">
+            <div class="flex flex-col m-auto" title="Select when the Category will show">
               <div>
                 <input type="radio" :name="category.id + 'Round'" :id="category.id + 'Round1'" value="Round 1"
-                  @change="roundChanged(category.id, 1)" class="accent-blue-500"
-                  :checked="editingBoard.settings.round1Cat.includes(category.id)">
-                <label :for="category.id + 'Round1'">Round 1</label>
+                  @change="roundChanged(category.id, 1)" class="accent-blue-500 cursor-pointer"
+                  :checked="editingBoard.settings.round1Cat.includes(category.id)"
+                  :disabled="editingBoard.settings.round1Cat.length >= 5 && !editingBoard.settings.round1Cat.includes(category.id)">
+                <label :for="category.id + 'Round1'" class="cursor-pointer">Round 1</label>
               </div>
-              <div>
+              <div class="cursor-pointer">
                 <input type="radio" :name="category.id + 'Round'" :id="category.id + 'Round2'" value="Round 2"
-                  @change="roundChanged(category.id, 2)" class="accent-blue-500"
-                  :checked="editingBoard.settings.round2Cat.includes(category.id)">
-                <label :for="category.id + 'Round2'">Round 2</label>
+                  @change="roundChanged(category.id, 2)" class="accent-blue-500 cursor-pointer"
+                  :checked="editingBoard.settings.round2Cat.includes(category.id)"
+                  :disabled="editingBoard.settings.round2Cat.length >= 5 && !editingBoard.settings.round2Cat.includes(category.id)">
+                <label :for="category.id + 'Round2'" class="cursor-pointer">Round 2</label>
               </div>
-              <div>
+              <div class="cursor-pointer">
                 <input type="radio" :name="category.id + 'Round'" :id="category.id + 'Random'" value="Random"
-                  @change="roundChanged(category.id, 0)" class="accent-blue-500"
+                  @change="roundChanged(category.id, 0)" class="accent-blue-500 cursor-pointer"
                   :checked="!editingBoard.settings.round1Cat.includes(category.id) && !editingBoard.settings.round2Cat.includes(category.id)">
-                <label :for="category.id + 'Random'">Random</label>
+                <label :for="category.id + 'Random'" class="cursor-pointer">Random</label>
               </div>
 
             </div>
-            <Icon icon="ion:trash" width="20" height="20" @click="deleteCategory(index)"
-              class="cursor-pointer m-auto" />
+            <div class="cursor-pointer m-auto" title="Delete Category">
+              <Icon icon="ion:trash" width="25" height="25" @click="deleteCategory(index)" />
+            </div>
+
 
           </div>
 
@@ -136,7 +170,10 @@ const resetBoard = () => {
             @close="showCategoryEditModal = undefined" @update="updateCategory">
           </EditCategory>
         </div>
-
+        <div v-show="editingBoard.categories.length < 10" class="flex gap-x-1 cursor-pointer " @click="addCategory()">
+          <label for="addCat" class="font-medium text-sm cursor-pointer">Add Category</label>
+          <Icon icon="material-symbols:add-2-rounded" width="18" height="18" id="addCat" class="my-auto" />
+        </div>
       </div>
       <div class="flex gap-x-4 border-t py-2">
         <button type="submit"
