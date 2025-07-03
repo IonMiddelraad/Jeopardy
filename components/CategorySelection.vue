@@ -77,19 +77,20 @@ const addCategoryToBoard = (category: Category, boardID: string | undefined) => 
   if (!boardID) {
     return
   }
-  gameStore.boards.forEach((board) => { console.log(board.id) });
   let index = gameStore.boards.findIndex((board: Board) => board.id.toString() === boardID.toString());
   if (!boardID || index < 0) {
-    toggleAddCategoryToBoard()
-    console.log("undefined", boardID, index)
+    toggleAddCategoryToBoard();
     return
   }
-  if (gameStore.boards[index].categories.length < 10 && !gameStore.boards[index].categories.includes(category)) {
-    gameStore.boards[index].categories.push(category)
-    console.log("pushed")
+  if (!gameStore.boards[index].categories.some(cat => cat.id === category.id)) {
+    console.log(gameStore.boards[index].categories)
+    console.log("not included")
+    if (gameStore.boards[index].categories.length < 10) {
+      gameStore.boards[index].categories.push(category);
+      console.log("pushed")
+    }
   }
-  toggleAddCategoryToBoard()
-  console.log("ended", addCategoryToBoardObj.value)
+  toggleAddCategoryToBoard();
 }
 
 function resetNewBoard() {
@@ -129,7 +130,8 @@ function getCategoryById(id: string) {
         <Icon icon="material-symbols:edit-square-outline" width="20" height="20" @click="editCategory(index)" />
       </div>
       <div class="cursor-pointer m-auto" title="Add to Board">
-        <Icon icon="material-symbols:add-2-rounded" width="20" height="20" @click="toggleAddCategoryToBoard(category)" />
+        <Icon icon="material-symbols:add-2-rounded" width="20" height="20"
+          @click="toggleAddCategoryToBoard(category)" />
       </div>
       <div class="cursor-pointer m-auto" title="Download as JSON">
         <Icon icon="material-symbols:download-rounded" width="20" height="20" @click="exportItem(category)" />
@@ -145,8 +147,8 @@ function getCategoryById(id: string) {
         <EditCategory :category="category" @close="showEditCategory = undefined" @update="updateCategory">
         </EditCategory>
       </Modal>
-      <Modal :show="addCategoryToBoardObj === category" width="50%" :can-close="true" @close="toggleAddCategoryToBoard()"
-        class="">
+      <Modal :show="addCategoryToBoardObj === category" width="50%" :can-close="true"
+        @close="toggleAddCategoryToBoard()" class="">
         <div class="flex flex-col gap-y-2">
           <div>
             <h3 class="font-medium text-lg">Select Board</h3>

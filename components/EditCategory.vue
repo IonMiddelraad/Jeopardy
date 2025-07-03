@@ -13,11 +13,7 @@ if (!props.category) {
   throw new Error('EditCategory: Category prop is required');
 }
 
-const editingCategory = reactive({
-  id: props.category.id ?? '',
-  name: props.category.name ?? '',
-  cards: props.category.cards ?? []
-})
+const editingCategory = reactive(deepClone(props.category));
 
 const addQuestion = () => {
   const nextPoints = (editingCategory.cards.length + 1) * 100
@@ -33,7 +29,7 @@ function removeQuestion(index: number) {
 }
 
 function saveCategory() {
-  editingCategory.id = `cat-${Date.now()}`
+  // editingCategory.id = `cat-${Date.now()}`
   emit('update', editingCategory);
   emit('close');
 }

@@ -14,22 +14,17 @@ if (!props.board) {
 const gameStore = useGameStore();
 const showCategoryEditModal = ref<Category>();
 
-const editingBoard = reactive({
-  id: props.board.id ?? '' as string,
-  name: props.board.name ?? '' as string,
-  categories: props.board?.categories ? [...props.board.categories] : [] as Category[],
-  settings: { ...props.board.settings },
-})
+const editingBoard = ref<Board>(deepClone(props.board));
 
 const roundChanged = (id: string, setRound: number) => {
-  editingBoard.settings.round1Cat = editingBoard.settings.round1Cat.filter((existingId: string) => existingId !== id)
-  editingBoard.settings.round2Cat = editingBoard.settings.round2Cat.filter((existingId: string) => existingId !== id)
+  editingBoard.value.settings.round1Cat = editingBoard.value.settings.round1Cat.filter((existingId: string) => existingId !== id)
+  editingBoard.value.settings.round2Cat = editingBoard.value.settings.round2Cat.filter((existingId: string) => existingId !== id)
   switch (setRound) {
     case 1:
-      editingBoard.settings.round1Cat.push(id);
+      editingBoard.value.settings.round1Cat.push(id);
       break;
     case 2:
-      editingBoard.settings.round2Cat.push(id);
+      editingBoard.value.settings.round2Cat.push(id);
       break;
     default:
       break;
@@ -37,9 +32,9 @@ const roundChanged = (id: string, setRound: number) => {
 }
 
 const addCategory = () => {
-  if (editingBoard.categories.length < 10) {
-    editingBoard.categories.push({
-      id: `cat-${Date.now()}-${editingBoard.categories.length}`,
+  if (editingBoard.value.categories.length < 10) {
+    editingBoard.value.categories.push({
+      id: `cat-${Date.now()}-${editingBoard.value.categories.length}`,
       name: "New Category",
       cards: []
     })
@@ -47,26 +42,29 @@ const addCategory = () => {
 }
 
 const editCategory = (index: number) => {
-  if (editingBoard.categories[index] === showCategoryEditModal.value) {
+  if (editingBoard.value.categories[index] === showCategoryEditModal.value) {
     showCategoryEditModal.value = undefined;
   } else {
-    showCategoryEditModal.value = editingBoard.categories[index];
+    showCategoryEditModal.value = editingBoard.value.categories[index];
   }
 }
 
 const deleteCategory = (index: number) => {
-  editingBoard.settings.round1Cat = editingBoard.settings.round1Cat.filter((existingId: string) => existingId !== editingBoard.categories[index].id)
-  editingBoard.settings.round2Cat = editingBoard.settings.round2Cat.filter((existingId: string) => existingId !== editingBoard.categories[index].id)
-  editingBoard.categories.splice(index, 1);
+  editingBoard.value.settings.round1Cat = editingBoard.value.settings.round1Cat.filter((existingId: string) => existingId !== editingBoard.value.categories[index].id)
+  editingBoard.value.settings.round2Cat = editingBoard.value.settings.round2Cat.filter((existingId: string) => existingId !== editingBoard.value.categories[index].id)
+  editingBoard.value.categories.splice(index, 1);
 }
 
 const updateCategory = (updatedCategory: Category) => {
-  let index = editingBoard.categories.findIndex((category) => category.id === updatedCategory.id);
-  editingBoard.categories.splice(index, 1, updatedCategory);
+  const index = editingBoard.value.categories.findIndex(cat => cat.id === updatedCategory.id);
+  if (index !== -1) {
+    editingBoard.value.categories.splice(index, 1, updatedCategory);
+  }
 }
 
 const addCategoryToStore = (category: Category) => {
-  if (gameStore.categories.includes(category)) {
+  if (gameStore.categories.some(cat => cat.id === category.id)) {
+    console.warn("This Category already exists.")
     return
   } else {
     gameStore.categories.push(category);
@@ -74,17 +72,17 @@ const addCategoryToStore = (category: Category) => {
 }
 
 const saveBoard = () => {
-  let index = gameStore.boards.findIndex((board) => board.id === editingBoard.id);
-  gameStore.boards.splice(index, 1, editingBoard);
+  let index = gameStore.boards.findIndex((board) => board.id === editingBoard.value.id);
+  gameStore.boards.splice(index, 1, editingBoard.value);
   emit("close")
   // resetBoard();
 }
 
 const resetBoard = () => {
-  editingBoard.id = '';
-  editingBoard.name = '';
-  editingBoard.categories = [];
-  editingBoard.settings = {
+  editingBoard.value.id = '';
+  editingBoard.value.name = '';
+  editingBoard.value.categories = [];
+  editingBoard.value.settings = {
     dailyDouble: false,
     finalJep: { enable: false },
     round1Cat: [],
