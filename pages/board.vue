@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { Card } from '~/models/card';
+import type { Category } from '~/models/category';
 
 const gameStore = useGameStore();
 const teamStore = useTeamStore();
@@ -8,6 +9,44 @@ const showAnswer = ref<boolean>(false);
 
 const teamColors = ['bg-gray-200', 'bg-green-400', 'bg-red-400'];
 const colorIndices = ref<number[]>([]);
+
+const activeCategories = computed(() => {
+  const board = gameStore.boardData;
+  if (!board) return [];
+  let activeCatIds: string[];
+  switch (gameStore.currentRound) {
+    case 1:
+      activeCatIds = board.settings.round1Cat;
+      break;
+    case 2:
+      activeCatIds = board.settings.round2Cat;
+      break;
+    default:
+      activeCatIds = [];
+      break;
+  }
+  return board.categories.filter(cat => activeCatIds.includes(cat.id));
+});
+
+const allCardsUnavailable = computed(() => {
+  // is true when active categories have been clicked
+  return activeCategories.value.length > 0 && activeCategories.value.every(category =>
+    category.cards.length > 0 && category.cards.every(card => card.available === false)
+  );
+});
+
+const goNextRound = () => {
+  showAnswer.value = false;
+  chosenCard.value = undefined;
+  if (gameStore.currentRound === 1) {
+    gameStore.currentRound = 2;
+    return
+  } if (gameStore.currentRound === 2) {
+    gameStore.currentRound = 0;
+    return
+  }
+  gameStore.currentRound = 0
+}
 
 function handleCardClick(clickedCard: Card) {
   if (!clickedCard.available) return;
@@ -37,10 +76,7 @@ function getColorClass(index: number) {
   return teamColors[colorIndices.value[index]]
 }
 
-onMounted(async () => {
-  if (!gameStore.boardData) {
-    await gameStore.fetchBoard();
-  }
+onMounted(() => {
   colorIndices.value = teamStore.teams.map(() => 0)
 })
 </script>
@@ -49,13 +85,10 @@ onMounted(async () => {
   <div class="mx-auto select-none">
 
     <!-- grid with category columns -->
-    <ClientOnly>
+    <ClientOnly v-if="activeCategories.length > 0">
 
       <div class="grid grid-cols-5 mx-4">
-        <div v-for="(category, index) in gameStore.boardData?.categories" :key="index"
-          class=" p-4 flex flex-col items-center">
-
-
+        <div v-for="(category) in activeCategories" :key="category.id" class=" p-4 flex flex-col items-center">
           <h1 class="text-xl font-bold text-center mb-2">{{ category.name }}</h1>
 
           <!-- cards in columns -->
@@ -89,6 +122,23 @@ onMounted(async () => {
           <h1 class="text-lg font-semibold border-2 border-black rounded-full cursor-pointer px-4 py-2"
             :class="getColorClass(index)" @click="cycleColor(index, team.id, chosenCard.points)">{{ team.name }}</h1>
         </div>
+      </div>
+    </section>
+    <!-- Next round -->
+    <section v-if="allCardsUnavailable" class="mt-4">
+      <div
+        class="cursor-pointer text-lg font-medium border-2 border-black rounded-full w-48 h-12 p-2 m-auto hover:bg-gray-100"
+        @click="goNextRound()">
+        <div class="flex gap-x-2 p-auto justify-center">
+          <h2>Next Round</h2>
+          <Icon icon="material-symbols:arrow-right-alt-rounded" height="30" width="30" class="my-auto" />
+        </div>
+      </div>
+    </section>
+    <!-- Final round -->
+    <section v-if="activeCategories.length === 0">
+      <div>
+        <WagerComponent mode="final-jeopardy"></WagerComponent>
       </div>
     </section>
   </div>

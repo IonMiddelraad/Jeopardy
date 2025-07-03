@@ -10,7 +10,7 @@ const showBoardEditModal = ref<boolean>(false);
 const selectedBoard = ref<Board>()
 
 function resetBoard() {
-  gameStore.fetchBoard();
+  gameStore.resetBoardData();
   teamStore.resetPoints();
 }
 
@@ -21,6 +21,15 @@ const deleteBoard = (index: number) => {
 const editBoard = (boardIndex: number) => {
   selectedBoard.value = gameStore.boards[boardIndex];
   showBoardEditModal.value = true;
+}
+
+const startGame = async (board: Board) => {
+  gameStore.setBoardData(board);
+  if (gameStore.boardData) {
+    await navigateTo("/board")
+  } else {
+    console.error("Could not load the Board data!")
+  }
 }
 
 function importFile(event: Event) {
@@ -56,11 +65,14 @@ function importFile(event: Event) {
   reader.readAsText(file)
 }
 
-onMounted(() => {
+onMounted(async () => {
   const gameStore = useGameStore();
+
+  if (gameStore.categories.length === 0 && gameStore.boards.length === 0) {
+    await gameStore.fetchExampleBoard();
+  }
   gameStore.setCategoriesID();
 })
-
 </script>
 
 <template>
@@ -77,12 +89,6 @@ onMounted(() => {
           Reset
         </button>
 
-        <NuxtLink to="/board">
-          <button type="button"
-            class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-28 font-medium border-2 border-black">
-            Start
-          </button>
-        </NuxtLink>
       </div>
     </section>
 
@@ -119,20 +125,23 @@ onMounted(() => {
         <div>
           <h2 class="text-xl font-semibold mt-4">Boards</h2>
           <div v-for="(board, index) in gameStore.boards"
-            class="grid grid-cols-[6fr_1fr_1fr_1fr] gap-x-2 my-2 mx-auto min-h-12 h-auto rounded bg-gray-100">
-            <div class="my-auto px-2 font-medium">
+            class="grid grid-cols-[1fr_8fr_1fr_1fr_1fr] gap-x-2 px-2 my-2 mx-auto min-h-12 h-auto rounded bg-gray-100">
+            <div class="cursor-pointer m-auto" title="Play">
+              <Icon icon="material-symbols:play-arrow-rounded" width="25" height="25" @click="startGame(board)" />
+            </div>
+            <div class="flex gap-x-1 my-auto px-2 font-medium">
               <input type="checkbox" :id="board.id" class="accent-green-600">
-              <label :for="board.id">{{ board.name }}</label>
+              <label :for="board.id" class="">{{ board.name }}</label>
             </div>
             <div class="cursor-pointer m-auto" title="Download as JSON">
-              <Icon icon="material-symbols:download-rounded" width="20" height="20" @click="exportItem(board)" />
+              <Icon icon="material-symbols:download-rounded" width="25" height="25" @click="exportItem(board)" />
             </div>
             <div class="cursor-pointer m-auto" title="Settings">
-              <Icon icon="ion:settings-outline" width="20" height="20" @click="editBoard(index)" />
+              <Icon icon="ion:settings-outline" width="25" height="25" @click="editBoard(index)" />
             </div>
 
 
-            <Icon icon="ion:trash" width="20" height="20" @click="deleteBoard(index)" class="cursor-pointer m-auto" />
+            <Icon icon="ion:trash" width="25" height="25" @click="deleteBoard(index)" class="cursor-pointer m-auto" />
           </div>
         </div>
 

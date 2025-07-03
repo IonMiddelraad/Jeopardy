@@ -40,7 +40,8 @@ const deleteCategory = (index: number) => {
 
 const updateCategory = (updatedCategory: Category) => {
   let index = gameStore.categories.findIndex((category) => category.id === updatedCategory.id);
-  gameStore.categories.splice(index, 1, updatedCategory)
+  updatedCategory.id = `cat-${Date.now()}-${index}`;
+  gameStore.categories.splice(index, 1, updatedCategory);
 }
 
 const createBoard = () => {
@@ -83,11 +84,8 @@ const addCategoryToBoard = (category: Category, boardID: string | undefined) => 
     return
   }
   if (!gameStore.boards[index].categories.some(cat => cat.id === category.id)) {
-    console.log(gameStore.boards[index].categories)
-    console.log("not included")
     if (gameStore.boards[index].categories.length < 10) {
       gameStore.boards[index].categories.push(category);
-      console.log("pushed")
     }
   }
   toggleAddCategoryToBoard();
@@ -107,10 +105,6 @@ function toggleCategory(category: Category) {
   }
 }
 
-function getCategoryById(id: string) {
-  return newBoard.categories.find((c) => c.id === id) as Category & { round: string }
-}
-
 </script>
 
 <template>
@@ -118,8 +112,8 @@ function getCategoryById(id: string) {
     <h2 class="text-xl font-semibold">Categories</h2>
 
     <div v-for="(category, index) in categoryList"
-      class="grid grid-cols-[6fr_1fr_1fr_1fr_1fr] gap-x-2 py-2 my-2 mx-auto h-auto rounded bg-gray-100">
-      <div class="my-auto px-2 font-medium">
+      class="grid grid-cols-[6fr_1fr_1fr_1fr_1fr] gap-x-2 p-2 my-2 mx-auto h-auto rounded bg-gray-100">
+      <div class="flex gap-x-1 my-auto px-2 font-medium">
         <input type="checkbox" :id="category.id" class="accent-green-600"
           :disabled="!isSelected(category.id) && newBoard.categories.length >= 10" v-model="selectedCategoryIds"
           :value="category.id" />

@@ -11,12 +11,13 @@ export interface ApiResponse {
 
 export const useGameStore = defineStore('game', {
   state: () => ({
-    boardData: null as Board | null,
+    boardData: undefined as Board | undefined,
+    currentRound: 1 as Number,
     categories: [] as Category[],
     boards: [] as Board[],
   }),
   actions: {
-    async fetchBoard() {
+    async fetchExampleBoard() {
       try {
         const response = await $fetch<ApiResponse>('/boards/exampleBoard.json')
         if (response.board) {
@@ -52,16 +53,31 @@ export const useGameStore = defineStore('game', {
       }
 
     },
-    setBoardData(newBoard: any) {
+    setBoardData(newBoard: Board) {
       if (!newBoard) return;
-      let tempBoard: Board = newBoard.board;
-      for (let category of newBoard.board.categories) {
-        let tempCat: Category = category;
-        for (let card of category.questions) {
-          let tempCard: Card = card;
-          tempCard.available = true;
-        }
-      }
+      this.currentRound = 1;
+      newBoard = balanceCategoriesPerRounds(newBoard);  
+      this.boardData = this.cloneBoardWithAvailableCards(newBoard);
+    },
+    resetBoardData() {
+      this.boardData = undefined;
+    },
+    cloneBoardWithAvailableCards(board: Board): Board {
+      return {
+        ...board,
+        categories: board.categories
+          .map(category => {
+            const validCards = category.cards
+              .filter(card => card.question.trim() !== '')
+              .map(card => ({ ...card, available: true }));
+
+            return {
+              ...category,
+              cards: validCards
+            };
+          })
+          .filter(category => category.cards.length > 0) // remove empty categories
+      };
     },
     setCategoriesID() {
       this.categories.forEach((category, index) => {
