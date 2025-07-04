@@ -29,7 +29,6 @@ export function balanceCategoriesPerRounds(
 
   // Calculate difference in rounds (round1 - round2)
   let diff = assignedRound1.length - assignedRound2.length;
-
   const shuffledUnassigned = shuffleArray(unassigned);
 
   for (const cat of shuffledUnassigned) {
