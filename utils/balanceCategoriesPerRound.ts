@@ -12,7 +12,8 @@ function shuffleArray<T>(array: T[]): T[] {
 
 export function balanceCategoriesPerRounds(
   board: Board,
-  maxPerRound = 5
+  maxPerRound = 5,
+  dailyDouble: boolean,
 ): Board {
   const round1Ids = new Set(board.settings.round1Cat);
   const round2Ids = new Set(board.settings.round2Cat);
@@ -29,6 +30,7 @@ export function balanceCategoriesPerRounds(
 
   // Calculate difference in rounds (round1 - round2)
   let diff = assignedRound1.length - assignedRound2.length;
+
   const shuffledUnassigned = shuffleArray(unassigned);
 
   for (const cat of shuffledUnassigned) {
@@ -49,9 +51,60 @@ export function balanceCategoriesPerRounds(
       }
     }
   }
+  if (!dailyDouble) {
+    return {
+      ...board,
+      settings: {
+        ...board.settings,
+        round1Cat: newRound1Cat,
+        round2Cat: newRound2Cat,
+      },
+    };
+  }
+  // Daily Double picker
 
+
+  const round1CatSet = new Set(newRound1Cat);
+  const round2CatSet = new Set(newRound2Cat);
+
+  const round1Cards: { catIndex: number; cardIndex: number }[] = [];
+  const round2Cards: { catIndex: number; cardIndex: number }[] = [];
+
+  // Build a cloned category list 
+  const newCategories = board.categories.map((category, catIndex) => {
+    const newCards = category.cards.map((card, cardIndex) => {
+      // Collect card references
+      if (card.question.trim() !== '') {
+        if (round1CatSet.has(category.id)) {
+          round1Cards.push({ catIndex, cardIndex });
+        } else if (round2CatSet.has(category.id)) {
+          round2Cards.push({ catIndex, cardIndex });
+        }
+      }
+
+      return { ...card }; // shallow clone
+    });
+
+    return {
+      ...category,
+      cards: newCards,
+    };
+  });
+
+  // Pick random indices
+  const pick = <T>(arr: T[], count: number): T[] =>
+    shuffleArray(arr).slice(0, count);
+
+  const round1DDs = pick(round1Cards, 1);
+  const round2DDs = pick(round2Cards, 2);
+
+  // Apply dailyDouble flags
+  for (const { catIndex, cardIndex } of [...round1DDs, ...round2DDs]) {
+    newCategories[catIndex].cards[cardIndex].dailyDouble = true;
+  }
   return {
     ...board,
+    categories: newCategories,
     settings: {
       ...board.settings,
       round1Cat: newRound1Cat,

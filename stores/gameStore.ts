@@ -56,7 +56,7 @@ export const useGameStore = defineStore('game', {
     setBoardData(newBoard: Board) {
       if (!newBoard) return;
       this.currentRound = 1;
-      newBoard = balanceCategoriesPerRounds(newBoard);  
+      newBoard = balanceCategoriesPerRounds(newBoard, 5, newBoard.settings.dailyDouble);
       this.boardData = this.cloneBoardWithAvailableCards(newBoard);
     },
     resetBoardData() {

@@ -4,4 +4,5 @@ export interface Card {
     answer: string;
     points: number;
     available?: boolean;
+    dailyDouble?: boolean;
 }
