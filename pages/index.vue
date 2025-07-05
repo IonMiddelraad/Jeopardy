@@ -23,6 +23,7 @@ const editBoard = (boardIndex: number) => {
 };
 
 const startGame = async (board: Board) => {
+	teamStore.resetPoints();
 	gameStore.setBoardData(board);
 	if (gameStore.boardData) {
 		await navigateTo("/board");
@@ -86,6 +87,14 @@ onMounted(async () => {
 					@click="resetBoard()">
 					Reset
 				</button>
+				<ClientOnly>
+					<NuxtLink
+						v-if="gameStore.boardData"
+						class="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600 w-28 font-medium border-2 border-black"
+						to="/board">
+						Resume Game
+					</NuxtLink>
+				</ClientOnly>
 			</div>
 		</section>
 

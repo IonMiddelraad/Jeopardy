@@ -47,12 +47,14 @@
 				</div>
 			</div>
 		</div>
-		<NuxtLink
-			to="/"
-			@click="resetGame()"
-			class="text-lg font-semibold border-2 border-black rounded-full cursor-pointer px-4 py-2 mt-20 mx-auto bg-sky-400 hover:bg-sky-500">
-			<button class="">Back to Menu</button>
-		</NuxtLink>
+		<client-only>
+			<NuxtLink
+				to="/"
+				@click="resetGame()"
+				class="text-lg font-semibold border-2 border-black rounded-full cursor-pointer px-4 py-2 mt-20 mx-auto bg-sky-400 hover:bg-sky-500">
+				<button class="">Back to Menu</button>
+			</NuxtLink>
+		</client-only>
 	</div>
 </template>
 

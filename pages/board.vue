@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-defineOptions({ ssr: false });
-
 import type { Card } from "~/models/card";
 
 const gameStore = useGameStore();
@@ -171,11 +169,13 @@ onMounted(() => {
 			</div>
 		</section>
 		<!-- Final round -->
-		<section v-if="activeCategories.length === 0">
-			<div>
-				<WagerComponent mode="final-jeopardy"></WagerComponent>
-			</div>
-		</section>
+		<ClientOnly>
+			<section v-if="activeCategories.length === 0">
+				<div>
+					<WagerComponent mode="final-jeopardy"></WagerComponent>
+				</div>
+			</section>
+		</ClientOnly>
 		<!-- Daily double -->
 		<section v-if="dailyDoubleActive">
 			<div>
