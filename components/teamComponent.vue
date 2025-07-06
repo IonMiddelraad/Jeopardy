@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Icon } from "@iconify/vue";
-import modal from "./Modal.vue";
+import Modal from "./Modal.vue";
 import type { Team } from "~/models/team";
 
 const teamStore = useTeamStore();
@@ -77,7 +77,7 @@ function removeTeam() {
 			</TransitionGroup>
 		</ClientOnly>
 		<!-- Edit team modal -->
-		<modal
+		<Modal
 			:show="showModal"
 			:can-close="true"
 			width="500px"
@@ -128,7 +128,7 @@ function removeTeam() {
 					</div>
 				</form>
 			</div>
-		</modal>
+		</Modal>
 		<!-- adding/deleting teams -->
 		<section
 			v-if="isIndex"
