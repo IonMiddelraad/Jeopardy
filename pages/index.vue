@@ -8,11 +8,6 @@ const importErrorMessage = ref<string>("");
 const showBoardEditModal = ref<boolean>(false);
 const selectedBoard = ref<Board>();
 
-function resetBoard() {
-	gameStore.resetBoardData();
-	teamStore.resetPoints();
-}
-
 const deleteBoard = (index: number) => {
 	gameStore.boards.splice(index, 1);
 };
@@ -76,75 +71,85 @@ onMounted(async () => {
 </script>
 
 <template>
-	<div class="mx-auto w-full">
+	<div class="flex flex-col gap-y-5 mx-auto w-full">
 		<!-- Start, Reset buttons -->
-		<section class="text-center pb-16">
+		<section class="text-center pb-8">
 			<h1 class="text-3xl font-bold py-2">Jeopardy!</h1>
-			<div class="flex flex-row justify-evenly w-[60%] mx-auto">
-				<button
-					type="button"
-					class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 w-28 font-medium border-2 border-black"
-					@click="resetBoard()">
-					Reset
-				</button>
+			<div class="flex flex-col gap-y-2 w-[60%] mx-auto">
 				<ClientOnly>
 					<NuxtLink
 						v-if="gameStore.boardData"
-						class="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600 w-28 font-medium border-2 border-black"
+						class="bg-green-500 hover:bg-green-600 text-white font-semibold w-36 py-2 border-2 border-black rounded mx-auto"
 						to="/board">
 						Resume Game
 					</NuxtLink>
 				</ClientOnly>
-			</div>
-		</section>
 
-		<!-- Category selection -->
-		<section class="grid grid-cols-2 px-10 mx-auto gap-x-10">
-			<!-- create category -->
-			<div>
-				<h1 class="text-2xl font-semibold py-2">Create a Category</h1>
-				<CreateCategory></CreateCategory>
-			</div>
+				<div class="py-2 px-4 mx-auto">
+					<input
+						type="file"
+						accept=".json"
+						id="jsonUpload"
+						@change="importFile"
+						class="hidden" />
 
-			<!-- select category or board -->
-			<div class="">
-				<div class="flex justify-between">
-					<h1 class="text-2xl font-semibold py-2">
-						Select Categories or Board
-					</h1>
+					<!-- Styled label that looks like a button -->
+					<label
+						for="jsonUpload"
+						class="bg-blue-500 hover:bg-blue-600 text-white font-semibold w-36 px-4 py-2 border-2 border-black rounded cursor-pointer">
+						Upload JSON
+					</label>
 					<p
 						v-show="importErrorMessage"
 						class="text-red-500 font-bold">
 						{{ importErrorMessage }}
 					</p>
-					<div class="flex flex-col my-auto">
-						<!-- <input type="file" accept=".json" class="" @change="importFile" /> -->
-						<input
-							type="file"
-							accept=".json"
-							id="jsonUpload"
-							@change="importFile"
-							class="hidden" />
-
-						<!-- Styled label that looks like a button -->
-						<label
-							for="jsonUpload"
-							class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 border border-black rounded cursor-pointer">
-							Upload JSON
-						</label>
-					</div>
 				</div>
-				<!-- Categories -->
+			</div>
+		</section>
+		<!-- explanation -->
+		<section
+			class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-10 mx-auto gap-x-8">
+			<div>
+				<h2 class="text-lg font-semibold">Play a custom game of jeopardy!</h2>
+				<p>
+					Hit "play" on one of the boards to start playing! You can also edit
+					any board by clicking on the settings button.<br />
+					Want to save a board for later or on another device? Click the
+					download button on a board to download it to your device. Click the
+					"Upload JSON" button to load in the downloaded board later.
+				</p>
+			</div>
+			<div>
+				<h2 class="text-lg font-semibold">
+					Turn your categories into a board!
+				</h2>
+				<p>
+					Select multiple categories and click the "Create Board" button to make
+					a board with the selected categories. You can also edit existing
+					categories in this list or add them to an already existing board.
+				</p>
+			</div>
+			<div>
+				<h2 class="text-lg font-semibold">Make your own categories!</h2>
+				<p>
+					Create your own categories to add them to a board. You can customize
+					the amount of points the question gives as well!
+				</p>
+			</div>
+		</section>
+
+		<!-- Grid -->
+		<section
+			class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-10 mx-auto gap-x-10">
+			<!-- Boards -->
+			<div>
+				<h1 class="text-2xl font-semibold py-2">Select Board to play</h1>
 				<ClientOnly>
-					<CategorySelection
-						:category-list="gameStore.categories"></CategorySelection>
-				</ClientOnly>
-				<!-- Boards -->
-				<ClientOnly>
-					<h2 class="text-xl font-semibold mt-4">Boards</h2>
+					<h2 class="text-xl font-semibold">Boards</h2>
 					<div
 						v-for="(board, index) in gameStore.boards"
-						class="grid grid-cols-[1fr_8fr_1fr_1fr_1fr] gap-x-2 px-2 my-2 mx-auto min-h-12 h-auto rounded bg-gray-100">
+						class="grid grid-cols-[1fr_8fr_1fr_1fr_1fr] gap-x-2 px-2 my-2 mx-auto min-h-12 h-auto rounded bg-gray-200">
 						<div
 							class="cursor-pointer m-auto"
 							title="Play">
@@ -154,8 +159,8 @@ onMounted(async () => {
 								height="25"
 								@click="startGame(board)" />
 						</div>
-						<div class="flex gap-x-1 my-auto px-2 font-medium">
-							<p class="">{{ board.name }}</p>
+						<div class="flex gap-x-1 my-auto px-2 font-medium overflow-hidden">
+							<p class="truncate block max-w-full">{{ board.name }}</p>
 						</div>
 						<div
 							class="cursor-pointer m-auto"
@@ -184,6 +189,22 @@ onMounted(async () => {
 							class="cursor-pointer m-auto" />
 					</div>
 				</ClientOnly>
+			</div>
+			<!-- select category or board -->
+			<div class="">
+				<div class="flex justify-between">
+					<h1 class="text-2xl font-semibold py-2">Select Categories</h1>
+				</div>
+				<!-- Categories -->
+				<ClientOnly>
+					<CategorySelection
+						:category-list="gameStore.categories"></CategorySelection>
+				</ClientOnly>
+			</div>
+			<!-- create category -->
+			<div class="row-span-5">
+				<h1 class="text-2xl font-semibold py-2">Create a Category</h1>
+				<CreateCategory></CreateCategory>
 			</div>
 		</section>
 		<Modal

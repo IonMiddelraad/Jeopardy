@@ -2,19 +2,22 @@
 	<div>
 		<!-- question -->
 		<div v-if="question">
-			<div class="flex flex-col items-center mt-4 pt-2 pb-8 mb-4 gap-y-2">
+			<div
+				v-motion-pop-visible
+				class="flex flex-col text-center items-center mt-4 pt-2 pb-8 mb-4 gap-y-2">
 				<h2
 					v-show="!wagers"
 					class="font-semibold text-xl">
 					${{ points }}
 				</h2>
-				<h1 class="font-semibold text-3xl pb-4 mb-4">
+				<h1 class="font-semibold text-3xl pb-4 mb-4 w-3/5">
 					{{ question }}
 				</h1>
 
 				<h2
+					v-motion-fade
 					v-if="showAnswer"
-					class="font-bold text-3xl">
+					class="font-bold text-3xl w-3/5">
 					{{ answer }}
 				</h2>
 				<button
@@ -30,6 +33,7 @@
 		<section class="flex flex-col gap-8">
 			<client-only>
 				<div
+					v-motion-fade
 					v-if="showAnswer"
 					class="flex flex-row gap-x-4 justify-center mt-8">
 					<div
@@ -45,6 +49,7 @@
 					</div>
 				</div>
 				<div
+					v-motion-fade
 					v-if="showAnswer"
 					@click="nextQuestion()"
 					class="flex justify-center text-lg font-semibold border-2 border-black rounded-full cursor-pointer w-36 px-4 py-2 mx-auto bg-sky-400 hover:bg-sky-500">
@@ -77,6 +82,13 @@ type WagerEntry = {
 	wager: number;
 	teamID: number;
 };
+
+watch(
+	() => props.answer,
+	() => {
+		showAnswer.value = false;
+	}
+);
 
 const teamStore = useTeamStore();
 const gameStore = useGameStore();

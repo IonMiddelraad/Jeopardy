@@ -14,14 +14,16 @@
 					<button
 						type="submit"
 						class="bg-blue-500 hover:bg-blue-600 text-white font-semibold m-auto py-2 px-4 border border-black rounded cursor-pointer">
-						Confirm wagers
+						Confirm Wagers
 					</button>
 					<client-only>
-						<div class="flex flex-row justify-evenly">
+						<div class="flex flex-wrap gap-4 justify-evenly">
 							<div
-								v-for="team in teamStore.teams.filter((t) => t.points > 4)"
+								v-for="team in teamStore.teams"
 								class="border-2 border-black rounded w-64 h-48 p-2 m-auto">
-								<div class="flex flex-col gap-y-4 p-auto justify-center">
+								<div
+									v-if="team.points > 0"
+									class="flex flex-col gap-y-4 p-auto text-center">
 									<div>
 										<h2 class="text-xl font-bold">
 											{{ team.name }}
@@ -31,12 +33,24 @@
 
 									<input
 										type="number"
-										placeholder="0"
+										placeholder="100"
 										:max="team.points"
 										min="1"
 										required
 										class="w-full font-medium p-2 pl-4 border border-black rounded-full"
 										@input="onWagerInput($event, team.id)" />
+								</div>
+								<div
+									v-else
+									class="flex flex-col gap-y-4 p-auto text-center">
+									<div>
+										<h2 class="text-xl font-bold">
+											{{ team.name }}
+										</h2>
+										<p class="text-lg font-medium">
+											Your team does not have enough points to wager.
+										</p>
+									</div>
 								</div>
 							</div>
 						</div>

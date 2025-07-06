@@ -47,13 +47,13 @@ function removeTeam() {
 			<TransitionGroup
 				name="teamList"
 				tag="section"
-				class="flex justify-evenly gap-x-2 px-2">
+				class="flex flex-col lg:flex-row justify-evenly gap-2 lg:px-2">
 				<div
 					v-for="team in teamStore.teams"
 					:key="team.id"
 					class="team-item text-center flex-1 min-w-48">
 					<div
-						class="flex flex-row gap-x-3 border-2 border-black border-t-0 rounded-b-full px-8 py-2 gap-4"
+						class="flex flex-row gap-x-3 border-2 border-black lg:border-t-0 rounded-full lg:rounded-none lg:rounded-b-full px-8 py-2 gap-4"
 						:style="{ backgroundColor: team.color || '#eab308' }">
 						<div
 							class="flex flex-col items-center justify-center mx-auto"

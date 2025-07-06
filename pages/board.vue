@@ -7,6 +7,8 @@ const chosenCard = ref<Card>();
 const showBoard = ref<boolean>(true);
 const dailyDoubleActive = ref<boolean>(false);
 const dailyDoubleCard = ref<Card>();
+const boardHeight = ref<number>(0);
+const board = ref<HTMLElement | null>(null);
 
 const answerColors = ["bg-gray-200", "bg-green-400", "bg-red-400"];
 const answerColorIndices = ref<number[]>([]);
@@ -55,10 +57,18 @@ const goNextRound = () => {
 	chosenCard.value = undefined;
 	if (gameStore.currentRound === 1) {
 		gameStore.currentRound = 2;
+
+		if (gameStore.boardData?.settings.round2Cat) {
+			goNextRound();
+		}
 		return;
 	}
 	if (gameStore.currentRound === 2) {
-		gameStore.currentRound = 0;
+		if (gameStore.boardData?.settings.finalJep.enable) {
+			gameStore.currentRound = 0;
+		} else {
+			navigateTo("/results");
+		}
 		return;
 	}
 	gameStore.currentRound = 0;
@@ -68,20 +78,28 @@ function handleCardClick(clickedCard: Card) {
 	if (!clickedCard.available) return;
 	else if (clickedCard.dailyDouble) {
 		dailyDoubleCard.value = clickedCard;
-		// dailyDoubleCard.value = JSON.parse(JSON.stringify(clickedCard));
 		dailyDoubleActive.value = true;
 	}
-	// chosenCard.value = JSON.parse(JSON.stringify(clickedCard));
 	chosenCard.value = clickedCard;
 	if (gameStore.currentRound === 2) {
-		// chosenCard.value!.points = chosenCard.value!.points * 2;
 	}
 
 	toggleBoard();
 }
 
 function toggleBoard() {
-	showBoard.value = !showBoard.value;
+	if (showBoard.value) {
+		boardHeight.value = board.value?.scrollHeight || 0;
+		requestAnimationFrame(() => {
+			boardHeight.value = 0;
+			showBoard.value = false;
+		});
+	} else {
+		showBoard.value = true;
+		nextTick(() => {
+			boardHeight.value = board.value?.scrollHeight || 0;
+		});
+	}
 }
 
 function nextQuestion() {
@@ -99,17 +117,29 @@ function disableCurrentCard() {
 	}
 }
 
-onMounted(() => {
+onMounted(async () => {
 	answerColorIndices.value = teamStore.teams.map(() => 0);
+	if (showBoard.value) {
+		await nextTick();
+		boardHeight.value = board.value?.scrollHeight || 0;
+	}
 });
 </script>
 
 <template>
-	<div class="mx-auto select-none">
+	<div
+		v-motion-fade
+		class="mx-auto select-none">
 		<!-- grid with category columns -->
 		<ClientOnly>
-			<div v-if="activeCategories.length > 0 && showBoard">
-				<div class="grid grid-cols-5 mx-4">
+			<div
+				ref="boardWrapper"
+				class="overflow-hidden transition-[max-height] duration-500 ease-in-out"
+				:style="{ maxHeight: showBoard ? boardHeight + 'px' : '0px' }">
+				<div
+					class="grid mx-4"
+					:class="`grid-cols-${Math.min(activeCategories.length, 12)}`"
+					ref="board">
 					<div
 						v-for="category in activeCategories"
 						:key="category.id"
@@ -139,6 +169,18 @@ onMounted(() => {
 				</div>
 			</div>
 		</ClientOnly>
+		<div
+			v-if="activeCategories.length > 0"
+			class="flex mx-4">
+			<button
+				class="border-2 border-black rounded-full w-3/5 mt-1 mx-auto"
+				@click="toggleBoard">
+				<Icon
+					icon="ion:chevron-down"
+					class="h-8 w-10 transform transition-transform mx-auto"
+					:class="{ 'rotate-180': showBoard }" />
+			</button>
+		</div>
 
 		<!-- question and answer -->
 		<section v-if="!dailyDoubleActive">

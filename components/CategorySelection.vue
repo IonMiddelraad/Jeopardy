@@ -125,8 +125,8 @@ function toggleCategory(category: Category) {
 
 		<div
 			v-for="(category, index) in categoryList"
-			class="grid grid-cols-[6fr_1fr_1fr_1fr_1fr] gap-x-2 p-2 my-2 mx-auto h-auto rounded bg-gray-100">
-			<div class="flex gap-x-1 my-auto px-2 font-medium">
+			class="grid grid-cols-[6fr_1fr_1fr_1fr_1fr] gap-x-2 p-2 my-2 mx-auto h-auto rounded bg-gray-200">
+			<div class="flex gap-x-1 my-auto px-2 font-medium overflow-hidden">
 				<input
 					type="checkbox"
 					:id="category.id"
@@ -136,7 +136,11 @@ function toggleCategory(category: Category) {
 					"
 					v-model="selectedCategoryIds"
 					:value="category.id" />
-				<label :for="category.id">{{ category.name }}</label>
+				<label
+					:for="category.id"
+					class="truncate block max-w-full"
+					>{{ category.name }}</label
+				>
 			</div>
 
 			<div

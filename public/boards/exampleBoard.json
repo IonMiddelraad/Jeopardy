@@ -1,171 +1,173 @@
 {
-    "board": {
-        "name": "testBoard",
-        "settings": {
-            "dailyDouble": false,
-            "finalJep": {
-                "enable": false
-            },
-            "round1Cat": [],
-            "round2Cat": []
-        },
-        "id": "exampleboard1",
-        "categories": [
-            {
-                "name": "Science",
-                "id": "science123",
-                "cards": [
-                    {
-                        "question": "This scientist is responsible for the discovery of the E = mc² formula",
-                        "answer": "Who is Albert Einstein?",
-                        "points": 100
-                    },
-                    {
-                        "question": "testquestion 2",
-                        "answer": "testanswer 2",
-                        "points": 200
-                    },
-                    {
-                        "question": "testquestion 3",
-                        "answer": "testanswer 3",
-                        "points": 300
-                    },
-                    {
-                        "question": "testquestion 4",
-                        "answer": "testanswer 4",
-                        "points": 400
-                    },
-                    {
-                        "question": "testquestion 5",
-                        "answer": "testanswer 5",
-                        "points": 500
-                    }
-                ]
-            },
-            {
-                "name": "testcategory 2",
-                "id": "test2",
-                "cards": [
-                    {
-                        "question": "testquestion 1",
-                        "answer": "testanswer 1",
-                        "points": 100
-                    },
-                    {
-                        "question": "testquestion 2",
-                        "answer": "testanswer 2",
-                        "points": 200
-                    },
-                    {
-                        "question": "testquestion 3",
-                        "answer": "testanswer 3",
-                        "points": 300
-                    },
-                    {
-                        "question": "testquestion 4",
-                        "answer": "testanswer 4",
-                        "points": 400
-                    },
-                    {
-                        "question": "testquestion 5",
-                        "answer": "testanswer 5",
-                        "points": 500
-                    }
-                ]
-            },
-            {
-                "name": "testcategory 3",
-                "id": "test3",
-                "cards": [
-                    {
-                        "question": "testquestion 1",
-                        "answer": "testanswer 1",
-                        "points": 100
-                    },
-                    {
-                        "question": "testquestion 2",
-                        "answer": "testanswer 2",
-                        "points": 200
-                    },
-                    {
-                        "question": "testquestion 3",
-                        "answer": "testanswer 3",
-                        "points": 300
-                    },
-                    {
-                        "question": "testquestion 4",
-                        "answer": "testanswer 4",
-                        "points": 400
-                    },
-                    {
-                        "question": "testquestion 5",
-                        "answer": "testanswer 5",
-                        "points": 500
-                    }
-                ]
-            },
-            {
-                "name": "testcategory 4",
-                "id": "test4",
-                "cards": [
-                    {
-                        "question": "testquestion 1",
-                        "answer": "testanswer 1",
-                        "points": 100
-                    },
-                    {
-                        "question": "testquestion 2",
-                        "answer": "testanswer 2",
-                        "points": 200
-                    },
-                    {
-                        "question": "testquestion 3",
-                        "answer": "testanswer 3",
-                        "points": 300
-                    },
-                    {
-                        "question": "testquestion 4",
-                        "answer": "testanswer 4",
-                        "points": 400
-                    },
-                    {
-                        "question": "testquestion 5",
-                        "answer": "testanswer 5",
-                        "points": 500
-                    }
-                ]
-            },
-            {
-                "name": "testcategory 5",
-                "id": "test5",
-                "cards": [
-                    {
-                        "question": "testquestion 1",
-                        "answer": "testanswer 1",
-                        "points": 100
-                    },
-                    {
-                        "question": "testquestion 2",
-                        "answer": "testanswer 2",
-                        "points": 200
-                    },
-                    {
-                        "question": "testquestion 3",
-                        "answer": "testanswer 3",
-                        "points": 300
-                    },
-                    {
-                        "question": "testquestion 4",
-                        "answer": "testanswer 4",
-                        "points": 400
-                    },
-                    {
-                        "question": "testquestion 5",
-                        "answer": "testanswer 5",
-                        "points": 500
-                    }
-                ]
-            }
-        ]
-    }
+	"board": {
+		"name": "Example Board",
+		"settings": {
+			"dailyDouble": true,
+			"finalJep": {
+				"enable": true,
+				"question": "These single-celled reproductive units are produced by certain fungi, plants, and bacteria, They are dispersed to develop into new organisms",
+				"answer": "What are spores?"
+			},
+			"round1Cat": [],
+			"round2Cat": []
+		},
+		"id": "exampleboard1",
+		"categories": [
+			{
+				"name": "Science",
+				"id": "science123",
+				"cards": [
+					{
+						"question": "This scientist is responsible for the discovery of the E = mc² formula.",
+						"answer": "Who is Albert Einstein?",
+						"points": 100
+					},
+					{
+						"question": "it is the process where a substance changes from a gaseous state to a liquid state.",
+						"answer": "What is condensation?",
+						"points": 200
+					},
+					{
+						"question": "This element is the most common element in the human body.",
+						"answer": "What is oxygen?",
+						"points": 300
+					},
+					{
+						"question": "This body of mass is the third closest to the sun of our solar system.",
+						"answer": "What is the earth?",
+						"points": 400
+					},
+					{
+						"question": "This unit of distance, is approximately 9,7 trillion kilometers long.",
+						"answer": "What is a light-year?",
+						"points": 500
+					}
+				]
+			},
+			{
+				"name": "Historic Figures",
+				"id": "historyFigures123",
+				"cards": [
+					{
+						"question": "aged 51, this leader's second exile was to the island of Saint Helena.",
+						"answer": "Who is Napoleon Bonaparte?",
+						"points": 100
+					},
+					{
+						"question": "Though it was Henri Becquerel that discovered radioactivity, it was this scientist who coined the term.",
+						"answer": "Who is Marie Curie?",
+						"points": 200
+					},
+					{
+						"question": "In 27 BCE, this man became the first Roman emperor, ending the Republic and beginning the Empire.",
+						"answer": "Who is Augustus Caesar?",
+						"points": 300
+					},
+					{
+						"question": "This British Prime Minister inspired a nation with speeches like “We shall fight on the beaches” during WWII.",
+						"answer": "Who is Winston Churchill?",
+						"points": 400
+					},
+					{
+						"question": "In 1776, this Virginian penned the first draft of the Declaration of Independence.",
+						"answer": "Who is Thomas Jefferson?",
+						"points": 500
+					}
+				]
+			},
+			{
+				"name": "Video Games",
+				"id": "cat-videogames-123",
+				"cards": [
+					{
+						"question": "Released in 1972, this game involving a paddle and ball is widely considered the first commercially successful video game.",
+						"answer": "What is Pong?",
+						"points": 100
+					},
+					{
+						"question": "This brother is mostly known by the name, 'Green Mario'.",
+						"answer": "Who is Luigi?",
+						"points": 200
+					},
+					{
+						"question": "First appearing in arcades, This video game series was born out of a surplus of video monitors.",
+						"answer": "What is Punch-Out!!",
+						"points": 300
+					},
+					{
+						"question": "These developers are responsible for the development of the so called 'Xeno-series'.",
+						"answer": "Who are Monolith Soft",
+						"points": 400
+					},
+					{
+						"question": "Developers of the Pong arcade game, this company was the first to make a successfull home video game console.",
+						"answer": "Who is Atari",
+						"points": 500
+					}
+				]
+			},
+			{
+				"name": "Outer Space",
+				"id": "space123",
+				"cards": [
+					{
+						"question": "This dwarf planet was demoted from full planet status in 2006.",
+						"answer": "What is Pluto?",
+						"points": 100
+					},
+					{
+						"question": "This is the closest planet to the Sun.",
+						"answer": "What is Mercury?",
+						"points": 200
+					},
+					{
+						"question": "This constellation is named after the daughter of Cassiopeia, in the Greek myth",
+						"answer": "What is Andromeda?",
+						"points": 300
+					},
+					{
+						"question": "This red planet is home to the largest volcano in the solar system, Olympus Mons.",
+						"answer": "What is Mars?",
+						"points": 400
+					},
+					{
+						"question": "This term refers to a massive explosion marking the end of a star's life.",
+						"answer": "What is a supernova?",
+						"points": 500
+					}
+				]
+			},
+			{
+				"name": "Pop Culture",
+				"id": "popculture123",
+				"cards": [
+					{
+						"question": "This South Korean series about deadly children's games became Netflix’s most-watched show in 2021.",
+						"answer": "What is Squid Game?",
+						"points": 100
+					},
+					{
+						"question": "This singer’s 2024 “Eras Tour” became the highest-grossing tour of all time.",
+						"answer": " Who is Taylor Swift?",
+						"points": 200
+					},
+					{
+						"question": "In 2022, this actor made headlines after slapping Chris Rock at the Oscars.",
+						"answer": "Who is Will Smith?",
+						"points": 300
+					},
+					{
+						"question": "This Netflix show about 1980s kids and a spooky parallel world features a creature called the Demogorgon.",
+						"answer": "What is Stranger Things?",
+						"points": 400
+					},
+					{
+						"question": "This former boy band member released Harry's House, which won Album of the Year at the 2023 Grammys.",
+						"answer": "Who is Harry Styles?",
+						"points": 500
+					}
+				]
+			}
+		]
+	}
 }

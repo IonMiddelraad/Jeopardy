@@ -33,6 +33,8 @@ export function balanceCategoriesPerRounds(
 
   const shuffledUnassigned = shuffleArray(unassigned);
 
+  let assignToRound1 = true; // toggle when diff === 0
+
   for (const cat of shuffledUnassigned) {
     if (diff > 0 && newRound2Cat.length < maxPerRound) {
       newRound2Cat.push(cat.id);
@@ -40,12 +42,16 @@ export function balanceCategoriesPerRounds(
     } else if (diff < 0 && newRound1Cat.length < maxPerRound) {
       newRound1Cat.push(cat.id);
       diff++;
-    } else {
-      // counts equal or no balancing needed, just assign to any round with space
-      if (newRound1Cat.length < maxPerRound) {
+    } else if (diff === 0) {
+      // Alternate fairly between both rounds
+      if (assignToRound1 && newRound1Cat.length < maxPerRound) {
         newRound1Cat.push(cat.id);
+        assignToRound1 = false;
       } else if (newRound2Cat.length < maxPerRound) {
         newRound2Cat.push(cat.id);
+        assignToRound1 = true;
+      } else if (newRound1Cat.length < maxPerRound) {
+        newRound1Cat.push(cat.id);
       } else {
         console.warn(`Category ${cat.id} could not be assigned (max per round reached).`);
       }

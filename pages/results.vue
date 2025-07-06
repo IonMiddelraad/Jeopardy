@@ -19,7 +19,8 @@
 		</div>
 		<h2 class="text-3xl font-bold">Scores:</h2>
 
-		<div class="grid grid-rows-2 grid-flow-col gap-y-8">
+		<div
+			class="grid grid-rows-5 sm:grid-rows-3 lg:grid-rows-2 grid-flow-col gap-y-8">
 			<div
 				v-for="result in resultsList"
 				class="flex flex-row gap-4 border-4 border-black rounded w-64 px-4 py-2"
