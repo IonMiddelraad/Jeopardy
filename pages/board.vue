@@ -58,7 +58,7 @@ const goNextRound = () => {
 	if (gameStore.currentRound === 1) {
 		gameStore.currentRound = 2;
 
-		if (gameStore.boardData?.settings.round2Cat) {
+		if (gameStore.boardData?.settings.round2Cat.length === 0) {
 			goNextRound();
 		}
 		return;
